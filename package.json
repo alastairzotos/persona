@@ -12,10 +12,10 @@
     "tsconfig": "*",
     "turbo": "latest"
   },
-  "name": "identity2",
+  "name": "persona",
   "packageManager": "yarn@1.22.19",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "libs/*"
   ]
 }

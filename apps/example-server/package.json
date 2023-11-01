@@ -1,0 +1,13 @@
+{
+  "name": "example-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon-ts src/index.ts"
+  },
+  "devDependencies": {
+    "nodemon-ts": "^1.0.1",
+    "@bitmetro/persona-node": "*"
+  }
+}
