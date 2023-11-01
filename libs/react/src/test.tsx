@@ -1,5 +1,10 @@
 import React from 'react';
+import { Test } from '@bitmetro/persona-types';
 
-export const Test = () => {
-  return <p>hello</p>
+const t: Test = {
+  foo: "Hello there"
+}
+
+export const Foo = () => {
+  return <p>{t.foo}</p>
 }

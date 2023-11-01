@@ -1,4 +1,4 @@
-import { Test } from '@bitmetro/persona-react';
+import { Foo } from '@bitmetro/persona-react';
 
 export default function Home() {
   return (
@@ -6,7 +6,7 @@ export default function Home() {
       className={`flex min-h-screen flex-col items-center justify-between p-24`}
     >
       <button className=''>Login</button>
-      <Test />
+      <Foo />
     </main>
   )
 }

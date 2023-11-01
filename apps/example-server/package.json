@@ -4,10 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon-ts src/index.ts"
+    "dev": "nodemon -q src/index.ts"
   },
   "devDependencies": {
-    "nodemon-ts": "^1.0.1",
-    "@bitmetro/persona-node": "*"
+    "@bitmetro/persona-node": "*",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1"
   }
 }
