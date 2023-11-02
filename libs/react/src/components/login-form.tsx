@@ -1,20 +1,21 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { OAuthProvider } from '@bitmetro/persona-types';
+import { Alert, AlertDescription, AlertIcon } from '@chakra-ui/react';
 import styled from '@emotion/styled'
+import { useQuery } from '@tanstack/react-query';
+
 import { fetchConfig } from '../requests/config';
 import { usePersona } from '../contexts/persona.context';
 import { EmailPasswordLogin } from './login-modes/email-password';
 import { GoogleLogin } from './login-modes/google';
 import { FacebookLogin } from './login-modes/facebook';
-import { OAuthProvider } from '@bitmetro/persona-types';
 import { SocialLoginProps } from '../types';
 import { useStatus } from '../contexts/status.context';
-import { Alert, AlertDescription, AlertIcon } from '@chakra-ui/react';
 
 const Container = styled('div')({
   padding: 32,
   border: '1px solid #03728c',
-  borderTop: '3px solid #03728c',
+  borderTop: '4px solid #03728c',
   borderRadius: 6
 })
 
