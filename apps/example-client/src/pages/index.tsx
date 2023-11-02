@@ -1,12 +1,14 @@
-import { Foo } from '@bitmetro/persona-react';
+import { PersonaProvider, LoginForm } from '@bitmetro/persona-react';
 
 export default function Home() {
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24`}
+    <PersonaProvider
+      apiUrl='http://localhost:3001'
     >
-      <button className=''>Login</button>
-      <Foo />
-    </main>
+      <main className="p-24" style={{ width: 600 }}>
+        <LoginForm />
+      </main>
+    </PersonaProvider>
   )
 }
+
