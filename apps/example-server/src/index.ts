@@ -39,5 +39,7 @@ const persona = new PersonaServer<User>({
 persona.on('get-user', (email) => Promise.resolve({ _id: '1234', email, details: { first_name: "alastair" } }))
 persona.on('create-user', (email, details) => Promise.resolve({ _id: '1234', email, details }));
 
+persona.start();
+
 app.listen(3001, () => console.log("Example server running on http://localhost:3001"));
 

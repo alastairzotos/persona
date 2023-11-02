@@ -22,8 +22,6 @@ export class PersonaServer<U extends BaseUserType = BaseUserType> {
     this.config = config;
 
     this.personaService = new PersonaService<U>(jwtSigningKey);
-
-    this.start();
   }
 
   on(event: 'get-user', handler: GetUserHandler<U>): void;
@@ -32,7 +30,7 @@ export class PersonaServer<U extends BaseUserType = BaseUserType> {
     this.personaService.on(event, handler);
   }
 
-  private start() {
+  start() {
     this.app.get('/persona/public-config', (req, res) => {
       res.json(this.getPublicConfig())
     })
