@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import { OAuthCredentials, OAuthProvider, PrivateConfig, PublicConfig, UserDetails } from '@bitmetro/persona-types';
-import { CreateUserHandler, GetUserHandler, PersonaService, PersonaServiceHookType } from './services/persona-service';
+import { BaseUserType, CreateUserHandler, GetUserHandler, PersonaService, PersonaServiceHookType } from './services/persona-service';
 
 interface Options {
   app: Express;
@@ -8,7 +8,7 @@ interface Options {
   config: PrivateConfig;
 }
 
-export class PersonaServer<U extends any = any> {
+export class PersonaServer<U extends BaseUserType = BaseUserType> {
   private app: Express;
   private config: PrivateConfig;
   private personaService: PersonaService<U>;
@@ -21,7 +21,7 @@ export class PersonaServer<U extends any = any> {
     this.app = app;
     this.config = config;
 
-    this.personaService = new PersonaService(jwtSigningKey);
+    this.personaService = new PersonaService<U>(jwtSigningKey);
 
     this.start();
   }

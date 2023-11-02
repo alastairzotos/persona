@@ -10,11 +10,13 @@ const providers: Record<OAuthProvider, OAuthVerifier> = {
   facebook: new FacebookOAuthProvider(),
 }
 
-export type PersonaServiceHookType = 'get-user' | 'create-user';
-export type GetUserHandler<U extends any = any> = (email: string) => Promise<U>;
-export type CreateUserHandler<U extends any = any> =  (email: string, details: UserDetails) => Promise<U>;
+export type BaseUserType = object;
 
-export class PersonaService<U extends any = any> {
+export type PersonaServiceHookType = 'get-user' | 'create-user';
+export type GetUserHandler<U extends BaseUserType = BaseUserType> = (email: string) => Promise<U>;
+export type CreateUserHandler<U extends BaseUserType = BaseUserType> =  (email: string, details: UserDetails) => Promise<U>;
+
+export class PersonaService<U extends BaseUserType = BaseUserType> {
   private getUser?: GetUserHandler<U>;
   private createUser?: CreateUserHandler<U>;
 
@@ -25,11 +27,11 @@ export class PersonaService<U extends any = any> {
   on(event: PersonaServiceHookType, handler: Function): void {
     switch (event) {
       case 'get-user':
-        this.getUser = handler as GetUserHandler;
+        this.getUser = handler as GetUserHandler<U>;
         break;
 
       case 'create-user':
-        this.createUser = handler as CreateUserHandler;
+        this.createUser = handler as CreateUserHandler<U>;
         break;
     }
   }
