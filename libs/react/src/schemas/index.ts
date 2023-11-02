@@ -1,10 +1,12 @@
 import { z } from "zod";
 
+export const userDetailSchema = z.enum(["first_name", "last_name", "display_name"])
+
 export const registerEmailPasswordSchema = z.object({
   email: z.string().email().optional(),
-  username: z.string().min(1).optional(),
   password: z.string().min(8),
   repeatPassword: z.string().min(8),
+  details: z.record(userDetailSchema, z.string()).optional(),
 }).refine(({ password, repeatPassword }) => password === repeatPassword, {
   path: ['repeatPassword'],
   message: "Passwords must match"

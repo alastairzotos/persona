@@ -1,31 +1,28 @@
 import React from 'react';
 import { useGoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-// import { loginWithGoogle } from "@/clients/identity.client";
-// import { useReturnWithAccessToken } from "@/hooks/return.hook";
 import { SocialLoginProps } from '../../types';
-import { SocialLoginButton } from './social-login-button';
+import { SocialLoginButton } from '../primitives/social-login-button';
 import { IconGoogle } from '../icons';
 import { useStatus } from '../../contexts/status.context';
 import { errorString } from '../../utils';
-import { loginWithOAuth } from '../../requests/oauth';
-import { usePersona } from '../../contexts/persona.context';
+import { loginWithOAuth } from '../../requests/auth';
+import { useConfig } from '../../contexts/config.context';
+import { useSession } from '../../contexts/session.context';
 
 const GoogleLoginButtonInner: React.FC = () => {
-  const { apiUrl } = usePersona();
+  const { apiUrl } = useConfig();
+  const { login } = useSession();
   const { isFetching, setStatus } = useStatus();
-
-  // const returnWithAccessToken = useReturnWithAccessToken();
 
   const handleGoogleLogin = useGoogleLogin({
     flow: "implicit",
     onNonOAuthError: () => setStatus(null),
     onSuccess: async (response) => {
       try {
-        const accessToken = await loginWithOAuth(apiUrl, 'google', response.access_token);
+        const { accessToken } = await loginWithOAuth(apiUrl, 'google', response.access_token);
 
-        console.log(accessToken);
+        login(accessToken);
 
-        // returnWithAccessToken(accessToken);
         setStatus("success");
       } catch (e) {
         setStatus("error", errorString(e))

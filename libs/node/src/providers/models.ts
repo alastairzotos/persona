@@ -6,5 +6,5 @@ export interface OAuthVerificationDetails {
 }
 
 export interface OAuthVerifier {
-  verifyAccessToken(providerAccessToken: string, userDetails: UserDetail[]): Promise<OAuthVerificationDetails | null>;
+  verifyAccessToken(providerAccessToken: string): Promise<OAuthVerificationDetails | null>;
 }

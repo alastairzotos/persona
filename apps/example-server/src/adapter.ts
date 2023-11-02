@@ -1,28 +1,29 @@
 import { PersonaAdapter } from "@bitmetro/persona-node";
-import { UserDetail, UserDetails } from "@bitmetro/persona-types";
+import { UserDetail } from "@bitmetro/persona-types";
+import { MockDb, User } from "./mock-db";
 
-export interface User {
-  _id: string;
-  email: string;
-  details: UserDetails;
-}
+const mockDb = new MockDb();
 
 export class MyAdapter implements PersonaAdapter<User> {
-  getUser(email: string): Promise<User> {
-    return Promise.resolve({
-      _id: '12345',
-      email,
-      details: {
-        first_name: 'Joe',
-      }
-    });
+  async getUserByEmail(email: string): Promise<User> {
+    return await mockDb.getUserByEmail(email);
   }
 
-  createUser(email: string, details: Partial<Record<UserDetail, string>>): Promise<User> {
-    return Promise.resolve({
-      _id: '12345',
+  async createUser(email: string, details: Partial<Record<UserDetail, string>>): Promise<User> {
+    return await mockDb.createUser({ email, firstName: details.first_name });
+  }
+
+  async createUserWithPasswordHash(email: string, details: Partial<Record<UserDetail, string>>, passwordHash: string): Promise<User> {
+    return await mockDb.createUser({
       email,
-      details
+      firstName: details.first_name,
+      passwordHash,
     })
+  }
+
+  async getUserPasswordHash(user: User): Promise<string | undefined> {
+    const found = await mockDb.getUserByEmail(user.email, false);
+
+    return found?.passwordHash;
   }
 }

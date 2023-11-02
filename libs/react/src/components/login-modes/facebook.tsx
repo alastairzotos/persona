@@ -3,11 +3,16 @@ import { ReactFacebookLoginInfo, ReactFacebookFailureResponse } from "react-face
 import FacebookLoginButton from 'react-facebook-login/dist/facebook-login-render-props'
 import { SocialLoginProps } from "../../types";
 import { IconFacebook } from "../icons";
-import { SocialLoginButton } from "./social-login-button";
+import { SocialLoginButton } from "../primitives/social-login-button";
 import { useStatus } from "../../contexts/status.context";
 import { errorString } from "../../utils";
+import { loginWithOAuth } from "../../requests/auth";
+import { useConfig } from "../../contexts/config.context";
+import { useSession } from "../../contexts/session.context";
 
 export const FacebookLogin: React.FC<SocialLoginProps> = ({ credentials }) => {
+  const { apiUrl } = useConfig();
+  const { login } = useSession();
   const { isFetching, setStatus } = useStatus();
 
   const handleLogin = async (userInfo: ReactFacebookLoginInfo | ReactFacebookFailureResponse) => {
@@ -15,15 +20,12 @@ export const FacebookLogin: React.FC<SocialLoginProps> = ({ credentials }) => {
       setStatus("error", `There was an error: ${(userInfo as ReactFacebookFailureResponse).status}`);
     } else {
       const info = userInfo as ReactFacebookLoginInfo;
-      console.log(info);
 
       try {
-        // const accessToken = await loginWithFacebook({
-        //   accessToken: info.accessToken,
-        //   propertyId: property._id,
-        // })
+        const { accessToken } = await loginWithOAuth(apiUrl, 'facebook', info.accessToken);
+        
+        login(accessToken);
 
-        // console.log(accessToken);
         setStatus("success");
       } catch (e) {
         setStatus("error", errorString(e))
@@ -44,11 +46,7 @@ export const FacebookLogin: React.FC<SocialLoginProps> = ({ credentials }) => {
           disabled={isFetching}
           onClick={() => {
             setStatus('fetching');
-            try {
             onClick();
-            } catch (e) {
-
-            }
           }}
         />
       )}

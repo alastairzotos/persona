@@ -1,6 +1,15 @@
-import { Express } from 'express';
-import { OAuthCredentials, OAuthProvider, PrivateConfig, PublicConfig } from '@bitmetro/persona-types';
-import { BaseUserType, PersonaAdapter } from '../adapters';
+import { Express, Request } from 'express';
+import {
+  BaseUserType,
+  LoginEmailPasswordRequestDto,
+  LoginOAuthRequestDto,
+  OAuthCredentials,
+  PrivateConfig,
+  PublicConfig,
+  RegisterEmailPasswordDto
+} from '@bitmetro/persona-types';
+
+import { PersonaAdapter } from '../adapters';
 import { PersonaService } from '../services/persona-service';
 
 interface Options<U extends BaseUserType = BaseUserType> {
@@ -32,9 +41,40 @@ export class PersonaServer<U extends BaseUserType = BaseUserType> {
       res.json(this.getPublicConfig())
     })
 
-    this.app.post('/persona/oauth/:provider',async (req, res) => {
-      const provider = req.params.provider as OAuthProvider;
-      const providerAccessToken = req.body.providerAccessToken as string;
+    this.app.post('/persona/register', async (req: Request<{}, {}, RegisterEmailPasswordDto>, res) => {
+      const {
+        email,
+        password,
+        details,
+      } = req.body;
+
+      const result = await this.personaService.registerWithEmailPassword(email, password, details);
+
+      if (result === 'existing-user') {
+        return res.sendStatus(409);
+      }
+
+      res.json(result);
+    })
+
+    this.app.post('/persona/login', async (req: Request<{}, {}, LoginEmailPasswordRequestDto>, res) => {
+      const { email, password } = req.body;
+
+      const result = await this.personaService.loginEmailPassword(email, password);
+
+      if (result === 'no-user') {
+        return res.sendStatus(404);
+      } else if (result === 'invalid-password') {
+        return res.sendStatus(403);
+      } else if (result === 'error') {
+        return res.sendStatus(500);
+      }
+
+      res.json(result);
+    })
+
+    this.app.post('/persona/oauth', async (req: Request<{}, {}, LoginOAuthRequestDto>, res) => {
+      const { provider, providerAccessToken } = req.body;
 
       const result = await this.personaService.loginOAuth(provider, providerAccessToken);
 

@@ -2,7 +2,8 @@ import * as express from 'express';
 import * as cors from 'cors';
 import { config } from 'dotenv';
 import { PersonaServer } from '@bitmetro/persona-node';
-import { MyAdapter, User } from './adapter';
+import { MyAdapter } from './adapter';
+import { User } from 'mock-db';
 
 config();
 
@@ -10,15 +11,13 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-
-
 const persona = new PersonaServer<User>({
   app,
   jwtSigningKey: process.env.JWT_SIGNING_KEY,
   adapter: new MyAdapter(),
   config: {
     emailPasswordConfig: {
-      userDetails: [],
+      userDetails: ['first_name', 'last_name', 'display_name'],
     },
     credentials: {
       google: {
@@ -36,4 +35,3 @@ const persona = new PersonaServer<User>({
 persona.start();
 
 app.listen(3001, () => console.log("Example server running on http://localhost:3001"));
-

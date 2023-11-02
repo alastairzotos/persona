@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import styled from '@emotion/styled'
 import { LoginEmailPasswordSchema, loginEmailPasswordSchema } from "../../schemas";
 import { AbsoluteCenter, Box, Button, Divider, FormControl, FormErrorMessage, Input } from "@chakra-ui/react";
 import { useStatus } from "../../contexts/status.context";
-
-const Container = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-})
+import { loginEmailPassword } from "../../requests/auth";
+import { useConfig } from "../../contexts/config.context";
+import { Container } from "../primitives";
+import { useSession } from "../../contexts/session.context";
 
 const PromptContainer = styled('div')({
   textAlign: 'center'
@@ -25,8 +23,9 @@ interface Props {
 }
 
 export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
+  const { apiUrl, gotoRegisterUrl } = useConfig();
+  const { login } = useSession();
   const { isFetching, setStatus } = useStatus();
-  // const returnWithAccessToken = useReturnWithAccessToken();
 
   const {
     control,
@@ -37,29 +36,13 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
     resolver: zodResolver(loginEmailPasswordSchema)
   })
 
-  // const {
-  //   status: loginStatus,
-  //   request: login,
-  //   value: loginResult,
-  //   error: loginError
-  // } = useLoginWithEmailAndPassword();
-
-  // useEffect(() => {
-  //   if (loginStatus === "success") {
-  //     returnWithAccessToken(loginResult?.accessToken || "");
-  //   }
-  // }, [loginStatus]);
-
   const onSubmit = async (data: LoginEmailPasswordSchema) => {
-    console.log(data);
     setStatus("fetching");
 
     try {
-      // await login({
-      //   propertyId: property._id,
-      //   email: data.email!,
-      //   password: data.password,
-      // });
+      const { accessToken } = await loginEmailPassword(apiUrl, data.email!, data.password);
+
+      login(accessToken);
 
       setStatus("success");
     } catch (e) {
@@ -82,10 +65,6 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Container>
-          {/* {loginStatus === "error" && (
-            <Alert severity="warning">{loginError.response?.data?.message || "There was an unexpected error"}</Alert>
-          )} */}
-
           <Controller
             name="email"
             control={control}
@@ -133,14 +112,9 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
             Login
           </LoginButton>
 
-          <a
-            // LinkComponent={Link}
-            // href={`/register?propertyId=${property.uniqueId}&fwd=${encodeURIComponent(getForwardUrl())}`}
-            target="_blank"
-            href="#"
-          >
+          <Button variant="link" onClick={gotoRegisterUrl}>
             Register
-          </a>
+          </Button>
         </Container>
       </form>
     </>

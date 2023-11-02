@@ -1,34 +1,27 @@
 import React from 'react';
 import { OAuthProvider } from '@bitmetro/persona-types';
 import { Alert, AlertDescription, AlertIcon } from '@chakra-ui/react';
-import styled from '@emotion/styled'
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchConfig } from '../requests/config';
-import { usePersona } from '../contexts/persona.context';
+import { useConfig } from '../contexts/config.context';
 import { EmailPasswordLogin } from './login-modes/email-password';
 import { GoogleLogin } from './login-modes/google';
 import { FacebookLogin } from './login-modes/facebook';
 import { SocialLoginProps } from '../types';
 import { useStatus } from '../contexts/status.context';
-
-const Container = styled('div')({
-  padding: 32,
-  border: '1px solid #03728c',
-  borderTop: '4px solid #03728c',
-  borderRadius: 6
-})
+import { FormBox } from './primitives';
 
 export const LoginForm: React.FC = () => {
-  const { apiUrl } = usePersona();
+  const { apiUrl } = useConfig();
   const { errorMessage } = useStatus();
 
-  const { data, isFetching, error } = useQuery({
+  const { data: config, isFetching, error } = useQuery({
     queryKey: ['config'],
     queryFn: () => fetchConfig(apiUrl),
   });
 
-  if (!data || isFetching) {
+  if (!config || isFetching) {
     return <p>Loading...</p>;
   }
 
@@ -38,23 +31,25 @@ export const LoginForm: React.FC = () => {
   }
 
   return (
-    <Container>
-      {Object.entries(data.credentials).map(([provider, credentials]) => (
-        credentialButton[provider as OAuthProvider]({ credentials })
-      ))}
+    <FormBox>
+      {Object.entries(config.credentials).map(([provider, credentials]) => {
+        const Component = credentialButton[provider as OAuthProvider];
 
-      {!!data.emailPasswordConfig && (
+        return <Component key={provider} credentials={credentials} />;
+      })}
+
+      {!!config.emailPasswordConfig && (
         <EmailPasswordLogin
-          showPrompt={!!data.credentials && Object.keys(data.credentials).length > 0}
+          showPrompt={!!config.credentials && Object.keys(config.credentials).length > 0}
         />
       )}
 
       {!!errorMessage && (
-        <Alert status="error">
+        <Alert status="error" mt={8}>
           <AlertIcon />
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       )}
-    </Container>
+    </FormBox>
   )
 }
