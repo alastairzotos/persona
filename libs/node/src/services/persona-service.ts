@@ -4,37 +4,20 @@ import { OAuthVerifier } from '../providers/models';
 import { GoogleOAuthProvider } from '../providers/google';
 import { FacebookOAuthProvider } from '../providers/facebook';
 import { mapRecord } from '../utils';
+import { BaseUserType, PersonaAdapter } from '../adapters/models';
 
 const providers: Record<OAuthProvider, OAuthVerifier> = {
   google: new GoogleOAuthProvider(),
   facebook: new FacebookOAuthProvider(),
 }
 
-export type BaseUserType = object;
 
-export type PersonaServiceHookType = 'get-user' | 'create-user';
-export type GetUserHandler<U extends BaseUserType = BaseUserType> = (email: string) => Promise<U>;
-export type CreateUserHandler<U extends BaseUserType = BaseUserType> =  (email: string, details: UserDetails) => Promise<U>;
 
 export class PersonaService<U extends BaseUserType = BaseUserType> {
-  private getUser?: GetUserHandler<U>;
-  private createUser?: CreateUserHandler<U>;
-
   constructor(
     private jwtSigningKey: string,
+    private adapter: PersonaAdapter<U>,
   ) {}
-
-  on(event: PersonaServiceHookType, handler: Function): void {
-    switch (event) {
-      case 'get-user':
-        this.getUser = handler as GetUserHandler<U>;
-        break;
-
-      case 'create-user':
-        this.createUser = handler as CreateUserHandler<U>;
-        break;
-    }
-  }
 
   async loginOAuth(provider: OAuthProvider, providerAccessToken: string): Promise<AccessTokenResponse | 'invalid-token' | 'error'> {
     const details = await providers[provider].verifyAccessToken(providerAccessToken, []);
@@ -45,10 +28,10 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
 
     const { email, userDetails } = details;
 
-    let user = await this.getUser?.(email);
+    let user = await this.adapter.getUser(email);
 
     if (!user) {
-      user = await this.createUser?.(
+      user = await this.adapter.createUser(
         email,
         mapRecord(userDetails as Record<string, string>, (value) => value?.trim())
       );

@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import { config } from 'dotenv';
 import { PersonaServer } from '@bitmetro/persona-node';
-import { UserDetails } from '@bitmetro/persona-types';
+import { MyAdapter, User } from './adapter';
 
 config();
 
@@ -10,15 +10,12 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-interface User {
-  _id: string;
-  email: string;
-  details: UserDetails;
-}
+
 
 const persona = new PersonaServer<User>({
   app,
   jwtSigningKey: process.env.JWT_SIGNING_KEY,
+  adapter: new MyAdapter(),
   config: {
     emailPasswordConfig: {
       userDetails: [],
@@ -35,9 +32,6 @@ const persona = new PersonaServer<User>({
     }
   }
 });
-
-persona.on('get-user', (email) => Promise.resolve({ _id: '1234', email, details: { first_name: "alastair" } }))
-persona.on('create-user', (email, details) => Promise.resolve({ _id: '1234', email, details }));
 
 persona.start();
 
