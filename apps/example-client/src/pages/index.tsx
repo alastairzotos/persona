@@ -1,3 +1,4 @@
+import { Button } from '@/pages/components';
 import { User } from '@/types';
 import { LoginForm, getAccessToken, usePersona } from '@bitmetro/persona-react';
 import { useState } from 'react';
@@ -21,19 +22,14 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div>
       {
         loggedInUser
-        ? (
-          <>
-            <p>Hello {loggedInUser.firstName}</p>
-            <button onClick={logout}>Logout</button>
-          </>
-        )
+        ? <p>Hello {loggedInUser.firstName}{' '}<a onClick={logout}>Logout</a></p>
         : <LoginForm />
       }
 
-      <button className='mt-8' onClick={handleRequestClick}>Request</button>
+      <Button className='mt-8' onClick={handleRequestClick}>Request</Button>
       <p>Secret data: {secretData}</p>
     </div>
   )
