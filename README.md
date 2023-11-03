@@ -78,7 +78,7 @@ export class MyAdapter implements PersonaAdapter<User> {
 
 If we also want to use email/password logins and registrations, we have to work with passwords:
 ```ts
-   async createUserWithPasswordHash(email: string, details: Partial<Record<UserDetail, string>>, passwordHash: string) {
+  async createUserWithPasswordHash(email: string, details: Partial<Record<UserDetail, string>>, passwordHash: string) {
     return await db.createUser({
       email,
       firstName: details.first_name!,
