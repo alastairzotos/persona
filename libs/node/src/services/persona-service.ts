@@ -18,25 +18,37 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     private adapter: PersonaAdapter<U>,
   ) { }
 
-  async verifyAccessToken(accessToken: string): Promise<U | 'invalid-token'> {
+  async verifyAccessToken(accessToken: string): Promise<U | 'invalid-token' | 'user-not-found'> {
     try {
-      let payload = jwt.verify(accessToken, this.jwtSigningKey) as U;
+      let payload = jwt.verify(accessToken, this.jwtSigningKey) as U | undefined;
 
-      if (this.adapter.exchanceJwtPayloadForUser) {
-        payload = await this.adapter.exchanceJwtPayloadForUser(payload);
+      if (payload) {
+        if (this.adapter.exchanceJwtPayloadForUser) {
+          payload = await this.adapter.exchanceJwtPayloadForUser(payload);
+
+          if (!payload) {
+            return 'user-not-found';
+          }
+
+          return payload;
+        }
       }
 
-      return payload;
+      return 'invalid-token'
     } catch {
       return 'invalid-token';
     }
   }
 
-  async registerWithEmailPassword(email: string, password: string, details: UserDetails): Promise<AccessTokenResponse | 'existing-user'> {
+  async registerWithEmailPassword(email: string, password: string, details: UserDetails): Promise<AccessTokenResponse | 'existing-user' | 'no-create-method'> {
     const existing = await this.adapter.getUserByEmail(email);
 
     if (!!existing) {
       return 'existing-user';
+    }
+
+    if (!this.adapter.createUserWithPasswordHash) {
+      return 'no-create-method';
     }
 
     const user = await this.adapter.createUserWithPasswordHash(email, details, await this.hashPassword(password));
@@ -46,11 +58,15 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  async loginEmailPassword(email: string, password: string): Promise<AccessTokenResponse | 'no-user' | 'invalid-password' | 'error'> {
+  async loginEmailPassword(email: string, password: string): Promise<AccessTokenResponse | 'no-user' | 'invalid-password' | 'no-pwd-hash-method'> {
     const user = await this.adapter.getUserByEmail(email);
 
     if (!user) {
       return 'no-user';
+    }
+
+    if (!this.adapter.getUserPasswordHash) {
+      return 'no-pwd-hash-method';
     }
 
     if (!await this.comparePasswords(password, await this.adapter.getUserPasswordHash(user) || '')) {
@@ -62,7 +78,7 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  async loginOAuth(provider: OAuthProvider, providerAccessToken: string): Promise<AccessTokenResponse | 'invalid-token' | 'error'> {
+  async loginOAuth(provider: OAuthProvider, providerAccessToken: string): Promise<AccessTokenResponse | 'invalid-token' | 'create-user-error'> {
     const details = await providers[provider].verifyAccessToken(providerAccessToken);
 
     if (!details) {
@@ -81,7 +97,7 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
 
     if (!user) {
-      return 'error';
+      return 'create-user-error';
     }
 
     return {

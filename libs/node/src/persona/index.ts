@@ -49,7 +49,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
 
     const payload = await this.verifyAccessToken(accessToken);
 
-    if (payload === 'invalid-token') {
+    if (payload === 'invalid-token' || payload === 'user-not-found') {
       return null;
     }
 
@@ -85,7 +85,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       const result = await this.personaService.registerWithEmailPassword(email, password, details);
 
       if (result === 'existing-user') {
-        return res.sendStatus(409);
+        return res.status(409).send("User already exists");
       }
 
       res.json(result);
@@ -97,11 +97,11 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       const result = await this.personaService.loginEmailPassword(email, password);
 
       if (result === 'no-user') {
-        return res.sendStatus(404);
+        return res.status(404).send("Cannot find user");
       } else if (result === 'invalid-password') {
-        return res.sendStatus(403);
-      } else if (result === 'error') {
-        return res.sendStatus(500);
+        return res.status(403).send("Invalid password");
+      } else if (result === 'no-pwd-hash-method') {
+        return res.status(404).send("Missing 'getUserPasswordHash' method in adapter");
       }
 
       res.json(result);
@@ -113,9 +113,9 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       const result = await this.personaService.loginOAuth(provider, providerAccessToken);
 
       if (result === 'invalid-token') {
-        return res.sendStatus(401);
-      } else if (result === 'error') {
-        return res.sendStatus(500);
+        return res.status(401).send("Invalid OAuth access token");
+      } else if (result === 'create-user-error') {
+        return res.status(500).send("Error creating account");
       }
 
       res.json(result);

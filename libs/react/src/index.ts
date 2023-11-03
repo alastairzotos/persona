@@ -1,5 +1,4 @@
 export * from './components/persona-provider';
-export * from './components/login-form';
-export * from './components/register-form';
+export * from './components/forms';
 export { usePersona } from './contexts/persona.context';
 export { getAccessToken } from './contexts/session.context';

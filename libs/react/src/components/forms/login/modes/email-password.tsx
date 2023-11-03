@@ -2,13 +2,14 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import styled from '@emotion/styled'
-import { LoginEmailPasswordSchema, loginEmailPasswordSchema } from "../../schemas";
+import { LoginEmailPasswordSchema, loginEmailPasswordSchema } from "../../../../schemas";
 import { AbsoluteCenter, Box, Button, Divider, FormControl, FormErrorMessage, Input } from "@chakra-ui/react";
-import { useStatus } from "../../contexts/status.context";
-import { loginEmailPassword } from "../../requests/auth";
-import { useConfig } from "../../contexts/config.context";
-import { Container } from "../primitives";
-import { useSession } from "../../contexts/session.context";
+import { useStatus } from "../../../../contexts/status.context";
+import { loginEmailPassword } from "../../../../requests/auth";
+import { useConfig } from "../../../../contexts/config.context";
+import { Container } from "../../../primitives";
+import { useSession } from "../../../../contexts/session.context";
+import { useAttempt } from "../../../../hooks";
 
 const PromptContainer = styled('div')({
   textAlign: 'center'
@@ -25,7 +26,7 @@ interface Props {
 export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
   const { apiUrl, gotoRegisterUrl } = useConfig();
   const { login } = useSession();
-  const { isFetching, setStatus } = useStatus();
+  const { isFetching } = useStatus();
 
   const {
     control,
@@ -36,19 +37,11 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
     resolver: zodResolver(loginEmailPasswordSchema)
   })
 
-  const onSubmit = async (data: LoginEmailPasswordSchema) => {
-    setStatus("fetching");
+  const onSubmit = useAttempt(async (data: LoginEmailPasswordSchema) => {
+    const { accessToken } = await loginEmailPassword(apiUrl, data.email!, data.password);
 
-    try {
-      const { accessToken } = await loginEmailPassword(apiUrl, data.email!, data.password);
-
-      login(accessToken);
-
-      setStatus("success");
-    } catch (e) {
-      setStatus("error", (e as any).message || JSON.stringify(e));
-    }
-  }
+    login(accessToken);
+  })
 
   return (
     <>

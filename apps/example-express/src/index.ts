@@ -3,7 +3,7 @@ import * as cors from 'cors';
 import { config } from 'dotenv';
 import { Persona } from '@bitmetro/persona-node';
 import { MyAdapter } from './adapter';
-import { User } from 'mock-db';
+import { User } from './mock-db';
 
 config();
 
@@ -13,19 +13,19 @@ app.use(cors())
 
 const persona = new Persona<User>({
   adapter: new MyAdapter(),
-  jwtSigningKey: process.env.JWT_SIGNING_KEY,
+  jwtSigningKey: process.env.JWT_SIGNING_KEY!,
   config: {
     emailPasswordConfig: {
       userDetails: ['first_name'],
     },
     credentials: {
       google: {
-        id: process.env.GOOGLE_CLIENT_ID,
-        secret: process.env.GOOGLE_CLIENT_SECRET,
+        id: process.env.GOOGLE_CLIENT_ID!,
+        secret: process.env.GOOGLE_CLIENT_SECRET!,
       },
       facebook: {
-        id: process.env.FB_APP_ID,
-        secret: process.env.FB_APP_SECRET,
+        id: process.env.FB_APP_ID!,
+        secret: process.env.FB_APP_SECRET!,
       }
     }
   }
