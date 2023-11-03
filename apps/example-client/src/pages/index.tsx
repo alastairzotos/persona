@@ -1,4 +1,4 @@
-import { Button } from '@/pages/components';
+import { Button } from '@/components';
 import { User } from '@/types';
 import { LoginForm, getAccessToken, usePersona } from '@bitmetro/persona-react';
 import { useState } from 'react';
