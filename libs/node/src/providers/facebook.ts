@@ -1,5 +1,5 @@
 import { UserDetail } from "@bitmetro/persona-types";
-import { OAuthVerificationDetails, OAuthVerifier } from "./models";
+import { OAuthVerificationDetails, OAuthVerifier } from "../models";
 
 const facebookFieldsToUserDetails = (info: any): Partial<Record<UserDetail, string>> => {
   return {

@@ -9,7 +9,7 @@ import {
   RegisterEmailPasswordDto
 } from '@bitmetro/persona-types';
 
-import { PersonaAdapter } from '../adapters';
+import { PersonaAdapter } from '../models';
 import { PersonaService } from '../services/persona-service';
 
 interface Options<U extends BaseUserType = BaseUserType> {

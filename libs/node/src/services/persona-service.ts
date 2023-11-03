@@ -2,11 +2,10 @@ import { AccessTokenResponse, BaseUserType, OAuthProvider, UserDetails } from '@
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 
-import { OAuthVerifier } from '../providers/models';
 import { GoogleOAuthProvider } from '../providers/google';
 import { FacebookOAuthProvider } from '../providers/facebook';
 import { mapRecord } from '../utils';
-import { PersonaAdapter } from '../adapters/models';
+import { PersonaAdapter, OAuthVerifier } from '../models';
 
 const providers: Record<OAuthProvider, OAuthVerifier> = {
   google: new GoogleOAuthProvider(),
