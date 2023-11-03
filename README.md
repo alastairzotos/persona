@@ -10,6 +10,18 @@ By providing customer adapters you can easily define how users are created and r
 
 Declare your configs server side and let the Login and Registration forms take shape automatically. Simply state which login methods you wish to use, provide the credentials, and the rest will take care of itself.
 
+### Installation
+
+For express, run:
+```sh
+npm i @bitmetro/persona-node
+```
+
+For React, run:
+```sh
+npm i @bitmetro/persona-react
+```
+
 ### Express example
 
 Setting up Persona on the server-side is easy:
