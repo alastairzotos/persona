@@ -61,6 +61,8 @@ Simple adapter:
 ```ts
 export class MyAdapter implements PersonaAdapter<User> {
   async getUserByEmail(email: string) {
+    // Important! Don't return passwords with the users
+    // Though passwords are hashed it's still bad practice to expose them
     return await db.getUserByEmail(email);
   }
 
@@ -70,6 +72,23 @@ export class MyAdapter implements PersonaAdapter<User> {
 }
 ```
 > **Note**: We can strongly type our users by providing type arguments
+
+If we also want to use email/password logins and registrations, we have to work with passwords:
+```ts
+   async createUserWithPasswordHash(email: string, details: Partial<Record<UserDetail, string>>, passwordHash: string) {
+    return await db.createUser({
+      email,
+      firstName: details.first_name!,
+      passwordHash,
+    })
+  }
+
+  async getUserPasswordHash(user: User) {
+    const found = await db.getUserByEmailWithPasswordHash(user.email);
+
+    return found?.passwordHash;
+  }
+```
 
 Guarding endpoints:
 
@@ -84,6 +103,12 @@ app.get('/secret-endpoint', persona.authGuard, (req, res) => {
 > **Note**: The `persona.authGuard` middleware will prevent unauthorized access.
 > If you want more granular control (for instance, if you're using a framework such as NestJS) you can also use `persona.authorize()` and `persona.verifyAccessToken()`
 
+Notice we have access to `principal` in our request object. This is the user that made the request. The data contained is parsed from the json web token, but we can exchange it for a live object. We might want to do this to double check if the user exists in the database for example. Add `exchangeJwtPayloadForUser` to your adapter:
+```ts
+  async exchangeJwtPayloadForUser(payload: User) {
+    return await this.getUserByEmail(payload.email);
+  }
+```
 
 ### React example
 
