@@ -16,7 +16,7 @@ const persona = new Persona<User>({
   jwtSigningKey: process.env.JWT_SIGNING_KEY,
   config: {
     emailPasswordConfig: {
-      userDetails: ['first_name', 'last_name', 'display_name'],
+      userDetails: ['first_name'],
     },
     credentials: {
       google: {
@@ -39,4 +39,4 @@ app.get('/secret', persona.authGuard, (req, res) => {
   res.send("42")
 })
 
-app.listen(3001, () => console.log("Example server running on http://localhost:3001"));
+// app.listen(3001, () => console.log("Example server running on http://localhost:3001"));

@@ -1,4 +1,4 @@
-import { Express, Request, RequestHandler } from 'express';
+import { Express, Request, RequestHandler, json } from 'express';
 import {
   BaseUserType,
   LoginEmailPasswordRequestDto,
@@ -69,6 +69,8 @@ export class Persona<U extends BaseUserType = BaseUserType> {
   }
 
   setupExpress(app: Express) {
+    app.use(json());
+
     app.get('/persona/public-config', (req, res) => {
       res.json(this.getPublicConfig())
     })

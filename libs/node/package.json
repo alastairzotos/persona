@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"No tests specified\"",
     "build": "tsup src/index.ts --format cjs --dts",
-    "dev": "yarn build -- --watch"
+    "dev": "tsc --watch"
   },
   "devDependencies": {
     "@bitmetro/persona-types": "*",
