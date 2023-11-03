@@ -26,4 +26,8 @@ export class MyAdapter implements PersonaAdapter<User> {
 
     return found?.passwordHash;
   }
+
+  async exchanceJwtPayloadForUser(payload: User): Promise<User> {
+    return await this.getUserByEmail(payload.email);
+  }
 }

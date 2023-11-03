@@ -18,6 +18,20 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     private adapter: PersonaAdapter<U>,
   ) { }
 
+  async verifyAccessToken(accessToken: string): Promise<U | 'invalid-token'> {
+    try {
+      let payload = jwt.verify(accessToken, this.jwtSigningKey) as U;
+
+      if (this.adapter.exchanceJwtPayloadForUser) {
+        payload = await this.adapter.exchanceJwtPayloadForUser(payload);
+      }
+
+      return payload;
+    } catch {
+      return 'invalid-token';
+    }
+  }
+
   async registerWithEmailPassword(email: string, password: string, details: UserDetails): Promise<AccessTokenResponse | 'existing-user'> {
     const existing = await this.adapter.getUserByEmail(email);
 

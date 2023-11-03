@@ -1,4 +1,4 @@
-import { Express, Request } from 'express';
+import { Express, Request, RequestHandler } from 'express';
 import {
   BaseUserType,
   LoginEmailPasswordRequestDto,
@@ -13,35 +13,67 @@ import { PersonaAdapter } from '../models';
 import { PersonaService } from '../services/persona-service';
 
 interface Options<U extends BaseUserType = BaseUserType> {
-  app: Express;
-  jwtSigningKey: string;
   adapter: PersonaAdapter<U>;
+  jwtSigningKey: string;
   config: PrivateConfig;
 }
 
-export class PersonaServer<U extends BaseUserType = BaseUserType> {
-  private app: Express;
+export class Persona<U extends BaseUserType = BaseUserType> {
   private config: PrivateConfig;
   private personaService: PersonaService<U>;
 
   constructor({
-    app,
     adapter,
     jwtSigningKey,
     config
   }: Options<U>) {
-    this.app = app;
     this.config = config;
 
     this.personaService = new PersonaService<U>(jwtSigningKey, adapter);
   }
 
-  start() {
-    this.app.get('/persona/public-config', (req, res) => {
+  async verifyAccessToken(accessToken: string) {
+    return await this.personaService.verifyAccessToken(accessToken);
+  }
+
+  async authorize(request: Request): Promise<U | null> {
+    if (!request.headers.authorization) {
+      return null;
+    }
+
+    const [kind, accessToken] = request.headers.authorization.split(' ');
+
+    if (kind !== 'Bearer' || !accessToken || accessToken === 'null') {
+      return null;
+    }
+
+    const payload = await this.verifyAccessToken(accessToken);
+
+    if (payload === 'invalid-token') {
+      return null;
+    }
+
+    (request as any).principal = payload;
+
+    return payload;
+  }
+
+  authGuard: RequestHandler = async (req, res, next) => {
+    const payload = await this.authorize(req);
+
+    if (!payload) {
+      return res.sendStatus(401);
+    }
+
+    next();
+  }
+
+  setupExpress(app: Express) {
+    app.get('/persona/public-config', (req, res) => {
       res.json(this.getPublicConfig())
     })
 
-    this.app.post('/persona/register', async (req: Request<{}, {}, RegisterEmailPasswordDto>, res) => {
+    app.post('/persona/register', async (req: Request<{}, {}, RegisterEmailPasswordDto>, res) => {
       const {
         email,
         password,
@@ -57,7 +89,7 @@ export class PersonaServer<U extends BaseUserType = BaseUserType> {
       res.json(result);
     })
 
-    this.app.post('/persona/login', async (req: Request<{}, {}, LoginEmailPasswordRequestDto>, res) => {
+    app.post('/persona/login', async (req: Request<{}, {}, LoginEmailPasswordRequestDto>, res) => {
       const { email, password } = req.body;
 
       const result = await this.personaService.loginEmailPassword(email, password);
@@ -73,7 +105,7 @@ export class PersonaServer<U extends BaseUserType = BaseUserType> {
       res.json(result);
     })
 
-    this.app.post('/persona/oauth', async (req: Request<{}, {}, LoginOAuthRequestDto>, res) => {
+    app.post('/persona/oauth', async (req: Request<{}, {}, LoginOAuthRequestDto>, res) => {
       const { provider, providerAccessToken } = req.body;
 
       const result = await this.personaService.loginOAuth(provider, providerAccessToken);
