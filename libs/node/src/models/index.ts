@@ -5,7 +5,7 @@ export interface PersonaAdapter<U extends BaseUserType = BaseUserType> {
   createUser(email: string, details: UserDetails): Promise<U>;
   createUserWithPasswordHash?(email: string, details: UserDetails, passwordHash: string): Promise<U>;
   getUserPasswordHash?(user: U): Promise<string | undefined>;
-  exchanceJwtPayloadForUser?(payload: U): Promise<U | undefined>;
+  exchangeJwtPayloadForUser?(payload: U): Promise<U | undefined>;
 }
 
 export interface OAuthVerificationDetails {
