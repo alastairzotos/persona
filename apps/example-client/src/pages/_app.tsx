@@ -10,6 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <PersonaProvider
       apiUrl='http://localhost:3001'
       gotoRegisterUrl={() => router.push('/register')}
+      onLogin={() => router.push('/')}
     >
       <main className="p-24" style={{ width: 600 }}>
         <Component {...pageProps} />

@@ -50,9 +50,7 @@ export const RegisterForm: React.FC = () => {
   }
 
   if (status === "success") {
-    return (
-      <p>check yer emails</p>
-    );
+    return; // If using verification, show "check your emails" prompt here
   }
 
   const userDetails = config.emailPasswordConfig?.userDetails;
