@@ -23,8 +23,8 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
       let payload = jwt.verify(accessToken, this.jwtSigningKey) as U | undefined;
 
       if (payload) {
-        if (this.adapter.exchanceJwtPayloadForUser) {
-          payload = await this.adapter.exchanceJwtPayloadForUser(payload);
+        if (this.adapter.exchangeJwtPayloadForUser) {
+          payload = await this.adapter.exchangeJwtPayloadForUser(payload);
 
           if (!payload) {
             return 'user-not-found';
