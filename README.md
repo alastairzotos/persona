@@ -26,6 +26,8 @@ npm i @bitmetro/persona-react
 
 Setting up Persona on the server-side is easy:
 
+##### Setup
+
 ```ts
 const app = express();
 app.use(express.json());
@@ -55,9 +57,9 @@ persona.setupExpress(app);
 ```
 
 > **Note**: If we don't provide credentials for `facebook` then the user will not see a *"Sign in with Facebook"* button. Simple!
-> **Note**: We can provide our user type as a type parameter too. This is so we can type the user object when we authenticate them (see [guarding](#guarding))
+> **Note**: We can provide our user type as a type parameter too. This is so we can type the user object when we authenticate them (see [guarding](#guarding-endpoints))
 
-##### [Simple adapter](#adapter):
+##### Simple adapter:
 
 ```ts
 export class MyAdapter implements PersonaAdapter<User> {
@@ -91,7 +93,7 @@ If we also want to use email/password logins and registrations, we have to work 
   }
 ```
 
-##### [Guarding endpoints](#guarding):
+##### Guarding endpoints
 
 
 ```ts
@@ -116,6 +118,8 @@ Notice we have access to `principal` in our request object. This is the user tha
 
 Adding Persona to your react app is as simple as wrapping it in a `<PersonaProvider`. For example, in NextJS:
 
+##### Setup
+
 ```tsx
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -132,6 +136,8 @@ export default function App({ Component, pageProps }: AppProps) {
 }
 ```
 
+##### Forms
+
 We can now provide login and registration forms easily:
 ```tsx
 const LoginPage = () => {
@@ -146,6 +152,8 @@ const RegisterPage = () => {
   )
 }
 ```
+
+##### Logging in and out
 
 If we wish to access the currently signed-in user:
 ```tsx
@@ -164,6 +172,8 @@ return (
   </button>
 )
 ```
+
+##### Authenticating requests
 
 And to authenticate our requests, we can use the `getAccessToken()` function to provide a Bearer token:
 ```ts
