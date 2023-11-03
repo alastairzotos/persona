@@ -4,7 +4,7 @@ Persona provides packages for you to integrate authentication easily into your R
 
 ### Own your data
 
-By providing customer adapters you can easily define how users are created and retrieved from your database. Persona is unopinionated and doesn't care what your data looks like, how it's stored or retrieved, or even what database engine you use.
+By providing custom adapters you can easily define how users are created and retrieved from your database. Persona is unopinionated and doesn't care what your data looks like, how it's stored or retrieved, or even what database engine you use.
 
 ### Zero-hastle configuration
 
