@@ -116,7 +116,7 @@ Notice we have access to `principal` in our request object. This is the user tha
 
 ### React example
 
-Adding Persona to your react app is as simple as wrapping it in a `<PersonaProvider`. For example, in NextJS:
+Adding Persona to your react app is as simple as wrapping it in a `<PersonaProvider />`. For example, in NextJS:
 
 ##### Setup
 
