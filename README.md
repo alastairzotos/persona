@@ -57,7 +57,7 @@ persona.setupExpress(app);
 > **Note**: If we don't provide credentials for `facebook` then the user will not see a *"Sign in with Facebook"* button. Simple!
 > **Note**: We can provide our user type as a type parameter too. This is so we can type the user object when we authenticate them (see [guarding](#guarding))
 
-[Simple adapter](#adapter):
+##### [Simple adapter](#adapter):
 
 ```ts
 export class MyAdapter implements PersonaAdapter<User> {
@@ -91,7 +91,7 @@ If we also want to use email/password logins and registrations, we have to work 
   }
 ```
 
-[Guarding endpoints](#guarding):
+##### [Guarding endpoints](#guarding):
 
 
 ```ts
