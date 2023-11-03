@@ -37,8 +37,6 @@ export class MockDb {
 
     this.users[_id] = created;
 
-    console.log(this.users);
-
     return created;
   }
 }
