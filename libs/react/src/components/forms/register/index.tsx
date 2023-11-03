@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import styled from '@emotion/styled'
 
-import { useStatus } from "../../../contexts/status.context";
+import { StatusProvider, useStatus } from "../../../contexts/status.context";
 import { useConfig } from "../../../contexts/config.context";
 import { registerEmailPassword } from "../../../requests/auth";
 import { RegisterEmailPasswordSchema, registerEmailPasswordSchema } from "../../../schemas";
@@ -24,7 +24,7 @@ const RegisterButton = styled(Button)({
   marginTop: 12,
 })
 
-export const RegisterForm: React.FC = () => {
+const RegisterFormInner: React.FC = () => {
   const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
@@ -154,5 +154,13 @@ export const RegisterForm: React.FC = () => {
         </Container>
       </form>
     </Wrapper>
+  )
+}
+
+export const RegisterForm: React.FC = () => {
+  return (
+    <StatusProvider>
+      <RegisterFormInner />
+    </StatusProvider>
   )
 }

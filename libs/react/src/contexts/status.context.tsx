@@ -1,24 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type FetchStatus = 'fetching' | 'success' | 'error' | null;
 
 interface StatusContextProps {
-  status: FetchStatus | undefined;
+  status: FetchStatus;
   isFetching: boolean;
-  errorMessage?: string;
+  errorMessage: string | null;
   setStatus: (status: FetchStatus, errorMessage?: string) => void;
 }
 
 const StatusContext = React.createContext<StatusContextProps>({
-  status: undefined,
+  status: null,
+  errorMessage: null,
   isFetching: false,
   setStatus: () => {},
 })
 
 export const StatusProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [status, setStatus] = useState<FetchStatus | undefined>();
-  const [errorMessage, setErrorMessage] = useState<string | undefined>();
-
+  const [status, setStatus] = useState<FetchStatus>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
   return (
     <StatusContext.Provider
       value={{
@@ -27,7 +28,7 @@ export const StatusProvider: React.FC<React.PropsWithChildren> = ({ children }) 
         errorMessage,
         setStatus: (status, errorMessage) => {
           setStatus(status);
-          setErrorMessage(errorMessage);
+          setErrorMessage(errorMessage || null);
         }
       }}
     >

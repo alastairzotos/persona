@@ -8,6 +8,7 @@ import { FacebookLogin } from './modes/facebook';
 import { SocialLoginProps } from '../../../types';
 import { Wrapper } from '../../wrapper';
 import { useFetchConfig } from '../../../hooks';
+import { StatusProvider } from '../../../contexts/status.context';
 
 export const LoginForm: React.FC = () => {
   const { config, isFetchingConfig } = useFetchConfig();
@@ -22,18 +23,20 @@ export const LoginForm: React.FC = () => {
   }
 
   return (
-    <Wrapper>
-      {Object.entries(config.credentials).map(([provider, credentials]) => {
-        const Component = credentialButton[provider as OAuthProvider];
+    <StatusProvider>
+      <Wrapper>
+        {Object.entries(config.credentials).map(([provider, credentials]) => {
+          const Component = credentialButton[provider as OAuthProvider];
 
-        return <Component key={provider} credentials={credentials} />;
-      })}
+          return <Component key={provider} credentials={credentials} />;
+        })}
 
-      {!!config.emailPasswordConfig && (
-        <EmailPasswordLogin
-          showPrompt={!!config.credentials && Object.keys(config.credentials).length > 0}
-        />
-      )}
-    </Wrapper>
+        {!!config.emailPasswordConfig && (
+          <EmailPasswordLogin
+            showPrompt={!!config.credentials && Object.keys(config.credentials).length > 0}
+          />
+        )}
+      </Wrapper>
+    </StatusProvider>
   )
 }
