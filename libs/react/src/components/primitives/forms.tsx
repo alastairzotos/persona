@@ -19,4 +19,5 @@ export const Input = styled('input')<InputProps>(({ invalid, theme }) => ({
   padding: theme.pad * 3,
   borderRadius: theme.borderRadius,
   borderColor: invalid ? 'red' : Color(theme.brandColor).lighten(0.9).hex(),
+  borderStyle: 'solid',
 }));

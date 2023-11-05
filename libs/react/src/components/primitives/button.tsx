@@ -7,6 +7,7 @@ interface Props {
 
 export const Button = styled('button')<Props>(({ variant = 'contained', disabled, theme }) => ({
   padding: theme.pad * 3,
+  border: 'none',
   borderRadius: theme.borderRadius,
 
   backgroundColor:
