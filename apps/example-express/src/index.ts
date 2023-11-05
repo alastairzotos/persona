@@ -39,4 +39,4 @@ app.get('/secret', persona.authGuard, (req, res) => {
   res.send("42")
 })
 
-// app.listen(3001, () => console.log("Example server running on http://localhost:3001"));
+app.listen(3001, () => console.log("Example server running on http://localhost:3001"));

@@ -1,6 +1,6 @@
-import { Button } from "@chakra-ui/react";
 import styled from '@emotion/styled'
 import React from "react";
+import { Button } from './button';
 
 interface Props {
   title: string;
@@ -10,19 +10,16 @@ interface Props {
 }
 
 const LoginButton = styled(Button)({
-  padding: 24,
   marginBottom: 12,
-  width: '100%',
 })
 
 export const SocialLoginButton: React.FC<Props> = ({ title, icon, onClick, disabled }) => {
   return (
     <LoginButton
       onClick={onClick}
-      isDisabled={disabled}
-      leftIcon={icon}
+      disabled={disabled}
     >
-      {title}
+      {icon} {title}
     </LoginButton>
   )
 }

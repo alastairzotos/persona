@@ -2,17 +2,17 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import styled from '@emotion/styled'
+import { userDetailLabel } from "@bitmetro/persona-types";
 
 import { StatusProvider, useStatus } from "../../../contexts/status.context";
 import { useConfig } from "../../../contexts/config.context";
 import { registerEmailPassword } from "../../../requests/auth";
 import { RegisterEmailPasswordSchema, registerEmailPasswordSchema } from "../../../schemas";
-import { Container } from "../../primitives";
-import { Button, FormControl, FormErrorMessage, Input } from "@chakra-ui/react";
+import { Button, Container } from "../../primitives";
 import { useSession } from "../../../contexts/session.context";
-import { userDetailLabel } from "@bitmetro/persona-types";
 import { Wrapper } from "../../wrapper";
 import { useAttempt, useFetchConfig } from "../../../hooks";
+import { FormErrorMessage, Input } from "../../primitives/forms";
 
 const Title = styled('h2')({
   textAlign: 'center',
@@ -65,19 +65,20 @@ const RegisterFormInner: React.FC = () => {
             name="email"
             control={control}
             render={({ field: { ref, ...field } }) => (
-              <FormControl isInvalid={!!errors.email}>
+              <>
                 <Input
                   type="email"
                   ref={ref}
                   placeholder="Your email"
-                  isDisabled={isSubmitting}
+                  invalid={!!errors.email}
+                  disabled={isSubmitting}
                   {...field}
                 />
 
                 {!!errors.email?.message && (
                   <FormErrorMessage>{errors.email.message}</FormErrorMessage>
                 )}
-              </FormControl>
+              </>
             )}
           />
 
@@ -88,18 +89,19 @@ const RegisterFormInner: React.FC = () => {
                 name={`details.${detail}`}
                 control={control}
                 render={({ field: { ref, ...field } }) => (
-                  <FormControl isInvalid={!!errors.details?.[detail]}>
+                  <>
                     <Input
                       ref={ref}
                       placeholder={userDetailLabel[detail]}
-                      isDisabled={isSubmitting}
+                      invalid={!!errors.details?.[detail]}
+                      disabled={isSubmitting}
                       {...field}
                     />
 
                     {!!errors.details?.[detail]?.message && (
                       <FormErrorMessage>{errors.details?.[detail]?.message}</FormErrorMessage>
                     )}
-                  </FormControl>
+                  </>
                 )}
               />
             ))
@@ -109,19 +111,19 @@ const RegisterFormInner: React.FC = () => {
             name="password"
             control={control}
             render={({ field: { ref, ...field } }) => (
-              <FormControl>
+              <>
                 <Input
                   type="password"
                   ref={ref}
                   placeholder="Your password"
-                  isDisabled={isSubmitting}
+                  disabled={isSubmitting}
                   {...field}
                 />
 
                 {!!errors.password?.message && (
                   <FormErrorMessage>{errors.password.message}</FormErrorMessage>
                 )}
-              </FormControl>
+              </>
             )}
           />
 
@@ -129,25 +131,26 @@ const RegisterFormInner: React.FC = () => {
             name="repeatPassword"
             control={control}
             render={({ field: { ref, ...field } }) => (
-              <FormControl>
+              <>
                 <Input
                   type="password"
                   ref={ref}
                   placeholder="Repeat password"
-                  isDisabled={isSubmitting}
+                  invalid={!!errors.repeatPassword}
+                  disabled={isSubmitting}
                   {...field}
                 />
 
                 {!!errors.repeatPassword?.message && (
                   <FormErrorMessage>{errors.repeatPassword.message}</FormErrorMessage>
                 )}
-              </FormControl>
+              </>
             )}
           />
 
           <RegisterButton
             type="submit"
-            isDisabled={!isValid || isSubmitting}
+            disabled={!isValid || isSubmitting}
           >
             Register
           </RegisterButton>

@@ -1,3 +1,4 @@
+export * from '@bitmetro/persona-types';
 export * from './components/persona-provider';
 export * from './components/forms';
 export { usePersona } from './contexts/persona.context';

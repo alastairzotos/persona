@@ -1,6 +1,5 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ChakraProvider } from '@chakra-ui/react'
 import { ConfigContext, ConfigContextProps } from '../contexts/config.context';
 import { BaseUserType } from '@bitmetro/persona-types';
 import { SessionProvider } from '../contexts/session.context';
@@ -15,9 +14,7 @@ export function PersonaProvider<U extends BaseUserType = BaseUserType>({
     <QueryClientProvider client={queryClient}>
       <ConfigContext.Provider value={props}>
         <SessionProvider<U>>
-          <ChakraProvider>
-            {children}
-          </ChakraProvider>
+          {children}
         </SessionProvider>
       </ConfigContext.Provider>
     </QueryClientProvider>
