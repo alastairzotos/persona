@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
-import styled from '@emotion/styled'
+import styled from 'styled-components'
 import { userDetailLabel } from "@bitmetro/persona-types";
 
 import { StatusProvider, useStatus } from "../../../contexts/status.context";
