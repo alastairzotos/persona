@@ -1,16 +1,20 @@
-import { BaseUserType } from '@bitmetro/persona-types';
 import React from 'react';
+import { BaseUserType } from '@bitmetro/persona-types';
+import type { DefaultTheme } from 'styled-components';
+import { defaultTheme } from '../theme';
 
 export interface ConfigContextProps<U extends BaseUserType = BaseUserType> {
   apiUrl: string;
-  gotoRegisterUrl: () => void;
+  onRegister?: () => void;
   onLogin?: (user: U, accessToken: string) => void;
   onLogout?: () => void;
+  theme?: DefaultTheme;
 }
 
 export const ConfigContext = React.createContext<ConfigContextProps>({
   apiUrl: '',
-  gotoRegisterUrl: () => {},
+  onRegister: () => {},
+  theme: defaultTheme,
 });
 
 export function useConfig<U extends BaseUserType = BaseUserType>() {

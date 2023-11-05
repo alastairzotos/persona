@@ -26,11 +26,13 @@ function getUserFromLocalstorage<U extends BaseUserType = BaseUserType>(): U | u
 }
 
 export function SessionProvider<U extends BaseUserType = BaseUserType>({ children }: React.PropsWithChildren) {
+  const [initialised, setInitialised] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<U | undefined>();
   const { onLogin, onLogout } = useConfig<U>();
 
   useEffect(() => {
     setLoggedInUser(getUserFromLocalstorage<U>());
+    setInitialised(true);
   }, [])
 
   const login = (accessToken: string) => {
@@ -48,7 +50,13 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
   }
 
   return (
-    <PersonaContext.Provider value={{ loggedInUser, logout }}>
+    <PersonaContext.Provider
+      value={{
+        initialised,
+        loggedInUser,
+        logout
+      }}
+    >
       <SessionContext.Provider value={{ login }}>
         {children}
       </SessionContext.Provider>

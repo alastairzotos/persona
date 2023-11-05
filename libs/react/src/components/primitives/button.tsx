@@ -1,24 +1,28 @@
 import styled from 'styled-components'
+import Color from 'color';
 
 interface Props {
   variant?: 'contained' | 'link';
 }
 
-export const Button = styled('button')<Props>(({ variant = 'contained', disabled }) => ({
-  padding: 12,
-  borderRadius: 8,
+export const Button = styled('button')<Props>(({ variant = 'contained', disabled, theme }) => ({
+  padding: theme.pad * 3,
+  borderRadius: theme.borderRadius,
+
   backgroundColor:
     variant === 'contained'
-    ? (disabled ? '#a3c9d1' : '#03728c')
-    : 'inherit',
+      ? (disabled ? Color(theme.brandColor).grayscale().hex() : theme.brandColor)
+      : 'inherit',
+
   color:
     variant === 'contained'
-    ? (disabled ? '#eee' : '#fff')
-    : (disabled ? '#a3a3a3' : 'inherit'),
+      ? (disabled ? Color(theme.buttonTextColor).darken(0.2).hex() : theme.buttonTextColor)
+      : (disabled ? Color(theme.linkColor).lighten(0.5).hex() : theme.linkColor),
+
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
   alignContent: 'center',
   alignItems: 'center',
-  gap: 6
+  gap: theme.pad * 2
 }))

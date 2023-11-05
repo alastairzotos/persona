@@ -2,11 +2,13 @@ import { BaseUserType } from "@bitmetro/persona-types";
 import React from "react";
 
 export interface PersonaContextProps<U extends BaseUserType = BaseUserType> {
+  initialised?: boolean;
   loggedInUser: U | undefined;
   logout: () => void;
 }
 
 export const PersonaContext = React.createContext<PersonaContextProps>({
+  initialised: false,
   loggedInUser: undefined,
   logout() {},
 })

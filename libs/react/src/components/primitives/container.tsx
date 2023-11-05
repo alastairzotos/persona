@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
-export const Container = styled('div')({
+export const Container = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: 6,
-})
+  gap: theme.pad * 2,
+}))

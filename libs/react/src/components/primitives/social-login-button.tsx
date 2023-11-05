@@ -9,13 +9,14 @@ interface Props {
   disabled?: boolean;
 }
 
-const LoginButton = styled(Button)({
-  marginBottom: 12,
-})
+const LoginButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.pad * 3,
+}))
 
 export const SocialLoginButton: React.FC<Props> = ({ title, icon, onClick, disabled }) => {
   return (
     <LoginButton
+      variant="contained"
       onClick={onClick}
       disabled={disabled}
     >

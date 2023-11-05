@@ -11,12 +11,13 @@ import { useSession } from "../../../../contexts/session.context";
 import { useAttempt } from "../../../../hooks";
 import { FormErrorMessage, Input } from "../../../primitives/forms";
 
-const PromptContainer = styled('div')({
+const PromptContainer = styled('div')(({ theme }) => ({
+  color: theme.textColor,
   textAlign: 'center',
-  paddingTop: 6,
-  paddingBottom: 6,
+  paddingTop: theme.pad * 2,
+  paddingBottom: theme.pad * 2,
   fontSize: '0.9rem',
-})
+}))
 
 const LoginButton = styled(Button)({
   marginTop: 12,
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
-  const { apiUrl, gotoRegisterUrl } = useConfig();
+  const { apiUrl, onRegister } = useConfig();
   const { login } = useSession();
   const { isFetching } = useStatus();
 
@@ -105,7 +106,7 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
             Login
           </LoginButton>
 
-          <Button variant="link" onClick={gotoRegisterUrl}>
+          <Button variant="link" onClick={onRegister} disabled>
             Register
           </Button>
         </Container>
