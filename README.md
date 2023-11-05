@@ -126,9 +126,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <PersonaProvider
-      apiUrl='http://localhost:3001'
-      gotoRegisterUrl={() => router.push('/register')}
+      apiUrl={...}
+      onRegister={() => router.push('/register')}
       onLogin={() => router.push('/')}
+      onLogout={() => router.push('/login')}
     >
       <Component {...pageProps} />
     </PersonaProvider>
@@ -186,4 +187,14 @@ const fetchSecretData = async () => {
 
   return await res.text();
 }
+```
+
+##### Theming
+
+The login and registration form themes can be customised by providing a `theme` property to the `PersonaProvider`
+
+```tsx
+<PersonaProvider theme={extendPersonaTheme({ ... })}>
+  ...
+</PersonaProvider>
 ```
