@@ -37,11 +37,13 @@ export class Persona<U extends BaseUserType = BaseUserType> {
   }
 
   async authorize(request: Request): Promise<U | null> {
-    if (!request.headers.authorization) {
+    const authHeader = (request.headers.authorization || request.headers.authentication) as string;
+
+    if (!authHeader) {
       return null;
     }
 
-    const [kind, accessToken] = request.headers.authorization.split(' ');
+    const [kind, accessToken] = authHeader.split(' ');
 
     if (kind !== 'Bearer' || !accessToken || accessToken === 'null') {
       return null;
