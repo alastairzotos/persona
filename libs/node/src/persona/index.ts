@@ -88,6 +88,8 @@ export class Persona<U extends BaseUserType = BaseUserType> {
 
       if (result === 'existing-user') {
         return res.status(409).send("User already exists");
+      } else if (result === 'no-create-method') {
+        return res.status(501).send("Missing user registration implementation");
       }
 
       res.json(result);
