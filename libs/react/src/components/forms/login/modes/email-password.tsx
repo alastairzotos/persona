@@ -106,7 +106,7 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
             Login
           </LoginButton>
 
-          <Button variant="link" onClick={onRegister} disabled>
+          <Button variant="link" onClick={onRegister}>
             Register
           </Button>
         </Container>
