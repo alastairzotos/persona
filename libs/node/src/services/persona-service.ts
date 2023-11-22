@@ -103,15 +103,15 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  private generateAccessToken(data: U): string {
+  generateAccessToken(data: U): string {
     return jwt.sign(data as any, this.jwtSigningKey);
   }
 
-  private async hashPassword(password: string) {
+  async hashPassword(password: string) {
     return await bcrypt.hash(password, 10);
   }
 
-  private async comparePasswords(password: string, hashedPassword: string) {
+  async comparePasswords(password: string, hashedPassword: string) {
     return await bcrypt.compare(password, hashedPassword);
   }
 }
