@@ -70,6 +70,10 @@ export class Persona<U extends BaseUserType = BaseUserType> {
     next();
   }
 
+  async verifyPassword(password: string, hashedPassword: string) {
+    return await this.personaService.comparePasswords(password, hashedPassword);
+  }
+
   setupExpress(app: Express) {
     app.use(json());
 
