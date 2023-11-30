@@ -8,7 +8,7 @@ export interface ConfigContextProps<U extends BaseUserType = BaseUserType> {
   onRegister?: () => void;
   onLogin?: (user: U, accessToken: string) => void;
   onLogout?: () => void;
-  theme?: DefaultTheme;
+  theme?: Partial<DefaultTheme>;
 }
 
 export const ConfigContext = React.createContext<ConfigContextProps>({

@@ -1,6 +1,5 @@
 declare module 'styled-components' {
   export interface DefaultTheme  {
-    showOutline: boolean;
     pad: number;
     brandColor: string;
     backgroundColor: string;
@@ -17,7 +16,6 @@ declare module 'styled-components' {
 import type { DefaultTheme } from 'styled-components';
 
 export const defaultTheme: DefaultTheme = {
-  showOutline: true,
   pad: 4,
 
   brandColor: '#2c63e6',
@@ -32,8 +30,3 @@ export const defaultTheme: DefaultTheme = {
   errorBackgroundColor: '#c96972',
   errorTextColor: '#fff',
 }
-
-export const extendPersonaTheme = (theme: Partial<DefaultTheme>): DefaultTheme => ({
-  ...defaultTheme,
-  ...theme,
-})

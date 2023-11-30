@@ -1,5 +1,5 @@
 import '@/styles/globals.css'
-import { PersonaProvider, extendPersonaTheme } from '@bitmetro/persona-react'
+import { PersonaProvider } from '@bitmetro/persona-react'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 
@@ -11,6 +11,9 @@ export default function App({ Component, pageProps }: AppProps) {
       apiUrl='http://localhost:3001'
       onRegister={() => router.push('/register')}
       onLogin={() => router.push('/')}
+      theme={{
+        brandColor: '#2c63e6'
+      }}
     >
       <main className="p-24" style={{ width: 600 }}>
         <Component {...pageProps} />

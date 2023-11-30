@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import Color from 'color';
 
@@ -18,6 +17,5 @@ interface InputProps {
 export const Input = styled('input')<InputProps>(({ invalid, theme }) => ({
   padding: theme.pad * 3,
   borderRadius: theme.borderRadius,
-  borderColor: invalid ? 'red' : Color(theme.brandColor).lighten(0.9).hex(),
-  borderStyle: 'solid',
+  outline: `1px solid ${invalid ? theme.errorBackgroundColor : Color(theme.brandColor).lighten(0.7).hex()}`
 }));

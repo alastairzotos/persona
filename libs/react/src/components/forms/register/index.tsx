@@ -14,12 +14,6 @@ import { Wrapper } from "../../wrapper";
 import { useAttempt, useFetchConfig } from "../../../hooks";
 import { FormErrorMessage, Input } from "../../primitives/forms";
 
-const Title = styled('h2')({
-  textAlign: 'center',
-  marginTop: 12,
-  marginBottom: 12,
-})
-
 const RegisterButton = styled(Button)({
   marginTop: 12,
 })
@@ -57,8 +51,6 @@ const RegisterFormInner: React.FC = () => {
 
   return (
     <Wrapper>
-      <Title>Register</Title>
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <Container>
           <Controller

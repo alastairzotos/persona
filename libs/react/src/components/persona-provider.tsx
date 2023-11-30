@@ -15,7 +15,7 @@ export function PersonaProvider<U extends BaseUserType = BaseUserType>({
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigContext.Provider value={props}>
-        <ThemeProvider theme={props.theme || defaultTheme}>
+        <ThemeProvider theme={{ ...defaultTheme, ...props.theme } || defaultTheme}>
           <SessionProvider<U>>
             {children}
           </SessionProvider>
