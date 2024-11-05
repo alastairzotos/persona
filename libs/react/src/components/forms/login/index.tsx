@@ -5,7 +5,6 @@ import { EmailPasswordLogin } from './modes/email-password';
 import { GoogleLogin } from './modes/google';
 import { FacebookLogin } from './modes/facebook';
 
-import { SocialLoginProps } from '../../../types';
 import { Wrapper } from '../../wrapper';
 import { useFetchConfig } from '../../../hooks';
 import { StatusProvider } from '../../../contexts/status.context';
@@ -17,18 +16,18 @@ export const LoginForm: React.FC = () => {
     return <p>Loading...</p>;
   }
 
-  const credentialButton: Record<OAuthProvider, React.FC<SocialLoginProps>> = {
-    google: props => <GoogleLogin {...props} />,
-    facebook: props => <FacebookLogin {...props} />,
+  const credentialButton: Record<OAuthProvider, React.FC> = {
+    google: GoogleLogin,
+    facebook: FacebookLogin,
   }
 
   return (
     <StatusProvider>
       <Wrapper>
-        {Object.entries(config.credentials).map(([provider, credentials]) => {
+        {Object.keys(config.credentials).map((provider) => {
           const Component = credentialButton[provider as OAuthProvider];
 
-          return <Component key={provider} credentials={credentials} />;
+          return <Component key={provider} />;
         })}
 
         {!!config.emailPasswordConfig && (

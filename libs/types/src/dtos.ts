@@ -1,4 +1,5 @@
 import { OAuthProvider, UserDetails } from "./config";
+import { BaseUserType } from "./misc";
 
 export interface RegisterEmailPasswordDto {
   email: string;
@@ -14,4 +15,9 @@ export interface LoginEmailPasswordRequestDto {
 export interface LoginOAuthRequestDto {
   provider: OAuthProvider;
   providerAccessToken: string;
+}
+
+export interface AuthStatus<U extends BaseUserType = BaseUserType> {
+  loggedIn: boolean;
+  user?: U;
 }

@@ -1,5 +1,5 @@
-import { UserDetail } from "@bitmetro/persona-types";
-import { OAuthVerificationDetails, OAuthVerifier } from "../models";
+import { TokenStorageMethod, UserDetail } from "@bitmetro/persona-types";
+import { OAuthVerificationDetails, OAuthHandler } from "../models";
 
 const googleFieldsToUserDetails = (info: any): Partial<Record<UserDetail, string>> => {
   return {
@@ -9,7 +9,33 @@ const googleFieldsToUserDetails = (info: any): Partial<Record<UserDetail, string
   }
 }
 
-export class GoogleOAuthProvider implements OAuthVerifier {
+export class GoogleOAuthProvider implements OAuthHandler {
+  getLoginUrl(storageMethod: TokenStorageMethod, clientId: string, redirectUri: string): string {
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20profile%20email&state=${storageMethod}`;
+  }
+
+  async exchangeOAuthCodeForAccessToken(code: string, credentials: { id: string; secret: string; }, redirectUri: string): Promise<string | null> {
+    try {
+      const data = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          client_id: credentials.id,
+          client_secret: credentials.secret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+        })
+      }).then((res) => res.json());
+
+      return data.access_token as string;
+    } catch {
+      return null;
+    }
+  }
+
   async verifyAccessToken(providerAccessToken: string): Promise<OAuthVerificationDetails | null> {
     try {
       const res = await fetch("https://www.googleapis.com/userinfo/v2/me", {

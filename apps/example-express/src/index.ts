@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as cors from 'cors';
 import { config } from 'dotenv';
 import { Persona } from '@bitmetro/persona-node';
 import { MyAdapter } from './adapter';
@@ -9,10 +8,11 @@ config();
 
 const app = express();
 app.use(express.json());
-app.use(cors())
 
 const persona = new Persona<User>({
   adapter: new MyAdapter(),
+  host: 'http://localhost:3001',
+  frontendUrl: 'http://localhost:3003',
   jwtSigningKey: process.env.JWT_SIGNING_KEY!,
   config: {
     emailPasswordConfig: {

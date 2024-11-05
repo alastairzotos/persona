@@ -1,13 +1,11 @@
 import { Button } from '@/components';
 import { User } from '@/types';
-import { LoginForm, getAccessToken, usePersona } from '@bitmetro/persona-react';
+import { LoginForm, usePersona } from '@bitmetro/persona-react';
 import { useState } from 'react';
 
 const fetchSecretData = async () => {
   const res = await fetch('http://localhost:3001/secret', {
-    headers: {
-      Authorization: `Bearer ${getAccessToken()}`
-    }
+    credentials: 'include'
   });
 
   return await res.text();
@@ -25,9 +23,13 @@ export default function Home() {
     <div>
       {
         loggedInUser
-        ? <p>Hello {loggedInUser.firstName}{' '}<a onClick={logout}>Logout</a></p>
-        : <LoginForm />
+          ? <p>Hello {loggedInUser.firstName}</p>
+          : <p>Hello stranger</p>
       }
+
+      <LoginForm />
+
+      <Button className='mt-8' onClick={logout}>Logout</Button>
 
       <Button className='mt-8' onClick={handleRequestClick}>Request</Button>
       <p>Secret data: {secretData}</p>

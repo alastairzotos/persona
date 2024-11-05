@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "dev": "nodemon -q src/index.ts"
+    "dev": "nodemon -q src/index.ts --watch ../../libs/node/dist"
   },
   "devDependencies": {
     "@bitmetro/persona-node": "*",
     "@types/express": "^4.17.20",
-    "nodemon": "^3.0.1",
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7",
     "ts-node": "^10.9.1"
   },
   "dependencies": {
