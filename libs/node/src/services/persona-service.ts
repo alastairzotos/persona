@@ -1,13 +1,13 @@
-import { AccessTokenResponse, BaseUserType, OAuthProvider, UserDetails } from '@bitmetro/persona-types';
+import { AccessTokenResponse, BaseUserType, ClientType, OAuthProvider, UserDetails, Credential } from '@bitmetro/persona-types';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 
 import { GoogleOAuthProvider } from '../providers/google';
 import { FacebookOAuthProvider } from '../providers/facebook';
 import { mapRecord } from '../utils';
-import { PersonaAdapter, OAuthVerifier } from '../models';
+import { PersonaAdapter, OAuthHandler, LoginResult } from '../models';
 
-const providers: Record<OAuthProvider, OAuthVerifier> = {
+const providers: Record<OAuthProvider, OAuthHandler> = {
   google: new GoogleOAuthProvider(),
   facebook: new FacebookOAuthProvider(),
 }
@@ -76,8 +76,18 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  async loginOAuth(provider: OAuthProvider, providerAccessToken: string): Promise<AccessTokenResponse | 'invalid-token' | 'create-user-error'> {
-    const details = await providers[provider].verifyAccessToken(providerAccessToken);
+  getOAuthProviderLoginUrl(provider: OAuthProvider, clientType: ClientType, clientId: string, redirectUri: string) {
+    return providers[provider].getLoginUrl(clientType, clientId, redirectUri);
+  }
+
+  async exchangeOAuthCodeForJwt(provider: OAuthProvider, code: string, credentials: Credential<false>, redirectUri: string): Promise<LoginResult> {
+    const accessToken = await providers[provider].exchangeOAuthCodeForAccessToken(code, credentials, redirectUri);
+
+    if (accessToken === null) {
+      return 'login-error';
+    }
+
+    const details = await providers[provider].verifyAccessToken(accessToken);
 
     if (!details) {
       return 'invalid-token';

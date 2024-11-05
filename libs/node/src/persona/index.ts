@@ -1,9 +1,13 @@
-import { Express, Request, RequestHandler, json } from 'express';
+import { Express, Request, Response, RequestHandler, json } from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import {
+  AccessTokenResponse,
   BaseUserType,
+  ClientType,
   LoginEmailPasswordRequestDto,
-  LoginOAuthRequestDto,
   OAuthCredentials,
+  OAuthProvider,
   PrivateConfig,
   PublicConfig,
   RegisterEmailPasswordDto
@@ -13,20 +17,28 @@ import { PersonaAdapter } from '../models';
 import { PersonaService } from '../services/persona-service';
 
 interface Options<U extends BaseUserType = BaseUserType> {
+  host: string;
+  frontendUrl?: string;
   adapter: PersonaAdapter<U>;
   jwtSigningKey: string;
   config: PrivateConfig;
 }
 
 export class Persona<U extends BaseUserType = BaseUserType> {
+  private host: string;
+  private frontendUrl?: string;
   private config: PrivateConfig;
   private personaService: PersonaService<U>;
 
   constructor({
+    host,
+    frontendUrl,
     adapter,
     jwtSigningKey,
     config
   }: Options<U>) {
+    this.host = host;
+    this.frontendUrl = frontendUrl;
     this.config = config;
 
     this.personaService = new PersonaService<U>(jwtSigningKey, adapter);
@@ -37,16 +49,22 @@ export class Persona<U extends BaseUserType = BaseUserType> {
   }
 
   async authorize(request: Request): Promise<U | null> {
-    const authHeader = (request.headers.authorization || request.headers.authentication) as string;
+    let accessToken = request.cookies.token as string;
 
-    if (!authHeader) {
-      return null;
-    }
+    if (!accessToken) {
+      const authHeader = (request.headers.authorization || request.headers.authentication) as string;
 
-    const [kind, accessToken] = authHeader.split(' ');
+      if (!authHeader) {
+        return null;
+      }
 
-    if (kind !== 'Bearer' || !accessToken || accessToken === 'null') {
-      return null;
+      const [kind, token] = authHeader.split(' ');
+
+      if (kind !== 'Bearer' || !token || token === 'null') {
+        return null;
+      }
+
+      accessToken = token;
     }
 
     const payload = await this.verifyAccessToken(accessToken);
@@ -76,6 +94,8 @@ export class Persona<U extends BaseUserType = BaseUserType> {
 
   setupExpress(app: Express) {
     app.use(json());
+    app.use(cookieParser());
+    app.use(cors({ credentials: true, origin: this.frontendUrl }));
 
     app.get('/persona/public-config', (req, res) => {
       res.json(this.getPublicConfig())
@@ -87,47 +107,107 @@ export class Persona<U extends BaseUserType = BaseUserType> {
         password,
         details,
       } = req.body;
+      const clientType = req.query.state as ClientType || 'web';
 
-      const result = await this.personaService.registerWithEmailPassword(email, password, details);
+      const loginResult = await this.personaService.registerWithEmailPassword(email, password, details);
 
-      if (result === 'existing-user') {
+      if (loginResult === 'existing-user') {
         return res.status(409).send("User already exists");
-      } else if (result === 'no-create-method') {
+      } else if (loginResult === 'no-create-method') {
         return res.status(501).send("Missing user registration implementation");
       }
 
-      res.json(result);
+      this.loginSuccess(clientType, loginResult, res);
     })
 
     app.post('/persona/login', async (req: Request<{}, {}, LoginEmailPasswordRequestDto>, res) => {
       const { email, password } = req.body;
+      const clientType = req.query.state as ClientType || 'web';
 
-      const result = await this.personaService.loginEmailPassword(email, password);
+      const loginResult = await this.personaService.loginEmailPassword(email, password);
 
-      if (result === 'no-user') {
+      if (loginResult === 'no-user') {
         return res.status(404).send("Cannot find user");
-      } else if (result === 'invalid-password') {
+      } else if (loginResult === 'invalid-password') {
         return res.status(403).send("Invalid password");
-      } else if (result === 'no-pwd-hash-method') {
+      } else if (loginResult === 'no-pwd-hash-method') {
         return res.status(404).send("Missing 'getUserPasswordHash' method in adapter");
       }
 
-      res.json(result);
+      this.loginSuccess(clientType, loginResult, res);
     })
 
-    app.post('/persona/oauth', async (req: Request<{}, {}, LoginOAuthRequestDto>, res) => {
-      const { provider, providerAccessToken } = req.body;
+    app.get('/persona/status', this.authGuard, async (req, res) => {
+      res.json({ loggedIn: true, user: (req as any).principal });
+    })
 
-      const result = await this.personaService.loginOAuth(provider, providerAccessToken);
+    app.post('/persona/logout', async (_, res) => {
+      res.cookie('token', '', { httpOnly: true, maxAge: 0 }).sendStatus(200);
+    })
 
-      if (result === 'invalid-token') {
-        return res.status(401).send("Invalid OAuth access token");
-      } else if (result === 'create-user-error') {
-        return res.status(500).send("Error creating account");
+    app.get('/persona/auth/callback/:provider', async (req, res: Response) => {
+      const code = req.query.code as string;
+      const clientType = req.query.state as ClientType;
+
+      const provider = req.params.provider as OAuthProvider;
+      const credentials = this.config.credentials[provider];
+
+      if (!code) {
+        return res.status(400).send('Missing code');
       }
 
-      res.json(result);
+      if (!credentials) {
+        return res.status(400).send('Missing credentials');
+      }
+
+      try {
+        const loginResult = await this.personaService.exchangeOAuthCodeForJwt(provider, code, credentials, this.buildRedirectUri(provider));
+
+        switch (loginResult) {
+          case 'create-user-error':
+            return res.status(500).send("Error creating account");
+
+          case 'invalid-token':
+            return res.status(401).send("Invalid OAuth access token");
+
+          case 'login-error':
+            return res.status(500).send("OAuth error");
+
+          default:
+            this.loginSuccess(clientType, loginResult, res, true);
+        }
+      } catch {
+        res.status(500).send('Authorisation failed');
+      }
     })
+
+    app.get('/persona/auth/:provider', async (req, res) => {
+      const provider = req.params.provider as OAuthProvider;
+      const clientType = req.query.state as ClientType || 'web';
+      const clientId = this.config.credentials[provider]?.id!;
+
+      const authUrl = this.personaService.getOAuthProviderLoginUrl(provider, clientType, clientId, this.buildRedirectUri(provider));
+
+      res.redirect(authUrl);
+    });
+  }
+
+  private loginSuccess(clientType: ClientType, loginResult: AccessTokenResponse, res: Response, redirect = false) {
+    if (clientType === 'web') {
+      res.cookie('token', loginResult.accessToken, { httpOnly: true });
+
+      if (redirect) {
+        if (!this.frontendUrl) {
+          return res.status(500).send('No frontendUrl provided');
+        }
+
+        res.redirect(this.frontendUrl);
+      } else {
+        res.send('Logged in');
+      }
+    } else {
+      res.json(loginResult);
+    }
   }
 
   private getPublicConfig(): PublicConfig {
@@ -139,5 +219,9 @@ export class Persona<U extends BaseUserType = BaseUserType> {
           [provider]: { id: creds.id }
         }), {})
     }
+  }
+
+  private buildRedirectUri(provider: OAuthProvider) {
+    return `${this.host}/persona/auth/callback/${provider}`;
   }
 }
