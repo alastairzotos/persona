@@ -29,11 +29,11 @@ function getUserFromLocalstorage<U extends BaseUserType = BaseUserType>(): U | u
 export function SessionProvider<U extends BaseUserType = BaseUserType>({ children }: React.PropsWithChildren) {
   const [initialised, setInitialised] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<U | undefined>();
-  const { onLogin, onLogout, storageMethod } = useConfig<U>();
+  const { apiUrl, onLogin, onLogout, storageMethod } = useConfig<U>();
 
   useEffect(() => {
     if (storageMethod === 'cookie') {
-      checkAuth<U>().then(status => setLoggedInUser(status.user));
+      checkAuth<U>(apiUrl).then(status => setLoggedInUser(status.user));
     } else {
       setLoggedInUser(getUserFromLocalstorage<U>());
     }
@@ -43,7 +43,7 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
 
   const login = async (accessToken: string) => {
     if (storageMethod === 'cookie') {
-      const status = await checkAuth<U>();
+      const status = await checkAuth<U>(apiUrl);
       
       setLoggedInUser(status.user);
 
@@ -61,7 +61,7 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
 
   const logout = async () => {
     if (storageMethod === 'cookie') {
-      await handleLogout();
+      await handleLogout(apiUrl);
     } else {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
     }

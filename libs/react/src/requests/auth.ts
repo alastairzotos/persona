@@ -22,13 +22,13 @@ export const loginEmailPassword = async (apiUrl: string, email: string, password
   return data;
 }
 
-export const handleLogout = async () => {
-  await axios.post('http://localhost:3001/persona/logout', {}, { withCredentials: true });
+export const handleLogout = async (apiUrl: string) => {
+  await axios.post(`${apiUrl}/persona/logout`, {}, { withCredentials: true });
 }
 
-export async function checkAuth<U extends BaseUserType = BaseUserType>(): Promise<AuthStatus<U>> {
+export async function checkAuth<U extends BaseUserType = BaseUserType>(apiUrl: string): Promise<AuthStatus<U>> {
   try {
-    const { data } = await axios.get('http://localhost:3001/persona/status', {
+    const { data } = await axios.get(`${apiUrl}/persona/status`, {
       withCredentials: true,
       headers: {
         Authorization: `Bearer ${getAccessToken()}`
