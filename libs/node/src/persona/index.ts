@@ -178,7 +178,8 @@ export class Persona<U extends BaseUserType = BaseUserType> {
           default:
             this.loginSuccess(storageMethod, loginResult, res, true);
         }
-      } catch {
+      } catch (e) {
+        console.error(e);
         res.status(500).send('Authorisation failed');
       }
     })
