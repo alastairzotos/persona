@@ -195,8 +195,9 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       const provider = req.params.provider as OAuthProvider;
       const storageMethod = req.query.storage as TokenStorageMethod || 'cookie';
       const clientId = this.config.credentials[provider]?.id!;
+      const redirectUri = req.query.redirect_uri as string | undefined;
 
-      const authUrl = this.personaService.getOAuthProviderLoginUrl(provider, storageMethod, clientId, this.buildRedirectUri(provider));
+      const authUrl = this.personaService.getOAuthProviderLoginUrl(provider, storageMethod, clientId, redirectUri || this.buildRedirectUri(provider));
 
       res.redirect(authUrl);
     });

@@ -1,21 +1,14 @@
-import { AccessTokenResponse, BaseUserType, LoginEmailPasswordRequestDto, LoginMode, OAuthProvider, PublicConfig, RegisterEmailPasswordDto, UserDetails } from "@bitmetro/persona-types";
+import {
+  AccessTokenResponse,
+  BaseUserType,
+  LoginEmailPasswordRequestDto,
+  LoginMode,
+  OAuthProvider,
+  PublicConfig,
+  RegisterEmailPasswordDto,
+  UserDetails,
+} from "@bitmetro/persona-types";
 import * as jwt from 'jsonwebtoken';
-
-type OAuthProviderInfo = {
-  authUrl: string;
-  scope: string;
-}
-
-const providerInfo: Record<OAuthProvider, OAuthProviderInfo> = {
-  google: {
-    authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    scope: 'openid profile email',
-  },
-  facebook: {
-    authUrl: 'https://www.facebook.com/v12.0/dialog/oauth',
-    scope: 'email,public_profile',
-  },
-};
 
 const LOCAL_STORAGE_KEY = '@bitmetro/persona-key';
 
@@ -127,15 +120,17 @@ export class PersonaExtension<U extends BaseUserType = BaseUserType> {
     const { accessToken } = await response.json() as AccessTokenResponse;
 
     this.loginWithAccessToken(accessToken);
+    
     return this.loggedInUser;
   }
 
   async handleOAuthLogin(provider: OAuthProvider) {
     return new Promise<U | null>((resolve) => {
-      const authUrl = this.getAuthUrl(provider);
-
       chrome.identity.launchWebAuthFlow(
-        { url: authUrl, interactive: true },
+        {
+          url: `${this.apiUrl}/persona/auth/${provider}?redirect_uri=${this.getRedirectUri()}`,
+          interactive: true,
+        },
         async (redirectUrl) => {
           if (chrome.runtime.lastError || !redirectUrl) {
             console.error('OAuth failed:', chrome.runtime.lastError);
@@ -182,24 +177,6 @@ export class PersonaExtension<U extends BaseUserType = BaseUserType> {
       console.error('Token exchange failed:', error);
       return null;
     }
-  }
-
-  private getAuthUrl(provider: OAuthProvider) {
-    if (!this.publicConfig) {
-      this.throwNotConfigured();
-    }
-
-    const { authUrl, scope } = providerInfo[provider];
-    const clientId = this.publicConfig!.credentials[provider]!.id;
-
-    const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: this.getRedirectUri(),
-      response_type: 'code',
-      scope,
-    });
-
-    return `${authUrl}?${params.toString()}`;
   }
 
   private getRedirectUri() {
