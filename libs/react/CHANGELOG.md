@@ -1,5 +1,11 @@
 # @bitmetro/persona-react
 
+## 2.3.0
+
+### Minor Changes
+
+- Handle auth from chrome extensions
+
 ## 2.2.0
 
 ### Minor Changes

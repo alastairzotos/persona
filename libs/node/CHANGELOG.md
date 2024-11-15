@@ -1,5 +1,11 @@
 # @bitmetro/persona-node
 
+## 2.2.0
+
+### Minor Changes
+
+- Handle auth from chrome extensions
+
 ## 2.1.0
 
 ### Minor Changes
