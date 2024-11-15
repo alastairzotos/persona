@@ -19,10 +19,7 @@ export class PersonaExtension<U extends BaseUserType = BaseUserType> {
 
   constructor(
     private apiUrl: string,
-  ) {
-    this.accessToken = localStorage.getItem(LOCAL_STORAGE_KEY);
-    this.loggedInUser = this.getUserFromAccessToken();
-  }
+  ) {}
 
   isReady() {
     return !!this.publicConfig;
@@ -38,6 +35,9 @@ export class PersonaExtension<U extends BaseUserType = BaseUserType> {
 
   async init() {
     try {
+      this.accessToken = localStorage.getItem(LOCAL_STORAGE_KEY);
+      this.loggedInUser = this.getUserFromAccessToken();
+      
       this.publicConfig = await this.fetchConfig(this.apiUrl);
     } catch (error) {
       console.error('Error fetching config:', error);
