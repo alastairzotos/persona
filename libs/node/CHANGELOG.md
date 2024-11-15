@@ -1,5 +1,11 @@
 # @bitmetro/persona-node
 
+## 2.3.0
+
+### Minor Changes
+
+- Chrome extensions now direct to backend-provided redirect url
+
 ## 2.2.0
 
 ### Minor Changes
