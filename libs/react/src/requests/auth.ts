@@ -5,19 +5,18 @@ import {
   BaseUserType,
   LoginEmailPasswordRequestDto,
   RegisterEmailPasswordDto,
-  TokenStorageMethod,
   UserDetails
 } from "@bitmetro/persona-types";
 import { getAccessToken } from '../contexts/session.context';
 
-export const registerEmailPassword = async (apiUrl: string, email: string, password: string, details: UserDetails, storageMethod: TokenStorageMethod): Promise<AccessTokenResponse> => {
-  const { data } = await axios.post(`${apiUrl}/persona/register?storage=${storageMethod}`, { email, password, details } as RegisterEmailPasswordDto, { withCredentials: storageMethod === 'cookie' });
+export const registerEmailPassword = async (apiUrl: string, email: string, password: string, details: UserDetails): Promise<AccessTokenResponse> => {
+  const { data } = await axios.post(`${apiUrl}/persona/register?storage=cookie`, { email, password, details } as RegisterEmailPasswordDto, { withCredentials: true });
 
   return data;
 }
 
-export const loginEmailPassword = async (apiUrl: string, email: string, password: string, storageMethod: TokenStorageMethod): Promise<AccessTokenResponse> => {
-  const { data } = await axios.post(`${apiUrl}/persona/login?storage=${storageMethod}`, { email, password } as LoginEmailPasswordRequestDto, { withCredentials: storageMethod === 'cookie' });
+export const loginEmailPassword = async (apiUrl: string, email: string, password: string): Promise<AccessTokenResponse> => {
+  const { data } = await axios.post(`${apiUrl}/persona/login?storage=cookie`, { email, password } as LoginEmailPasswordRequestDto, { withCredentials: true });
 
   return data;
 }

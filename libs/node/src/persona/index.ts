@@ -18,7 +18,7 @@ import { PersonaService } from '../services/persona-service';
 
 interface Options<U extends BaseUserType = BaseUserType> {
   host: string;
-  frontendUrl?: string;
+  clientUrls?: string[];
   adapter: PersonaAdapter<U>;
   jwtSigningKey: string;
   config: PrivateConfig;
@@ -26,19 +26,19 @@ interface Options<U extends BaseUserType = BaseUserType> {
 
 export class Persona<U extends BaseUserType = BaseUserType> {
   private host: string;
-  private frontendUrl?: string;
+  private clientUrls?: string[];
   private config: PrivateConfig;
   private personaService: PersonaService<U>;
 
   constructor({
     host,
-    frontendUrl,
+    clientUrls,
     adapter,
     jwtSigningKey,
     config
   }: Options<U>) {
     this.host = host;
-    this.frontendUrl = frontendUrl;
+    this.clientUrls = clientUrls;
     this.config = config;
 
     this.personaService = new PersonaService<U>(jwtSigningKey, adapter);
@@ -95,8 +95,16 @@ export class Persona<U extends BaseUserType = BaseUserType> {
   setupExpress(app: Express) {
     app.use(json());
     app.use(cookieParser());
-    app.use(cors({ credentials: true, origin: this.frontendUrl }));
-    // app.use(cors());
+    app.use(cors({
+      credentials: true,
+      origin: (origin, cb) => {
+        if (!origin || this.clientUrls?.includes(origin)) {
+          cb(null, true);
+        } else {
+          cb(new Error('CORS error'));
+        }
+      }
+    }));
 
     app.get('/persona/public-config', (req, res) => {
       res.json(this.getPublicConfig())
@@ -128,10 +136,8 @@ export class Persona<U extends BaseUserType = BaseUserType> {
 
       const loginResult = await this.personaService.loginEmailPassword(email, password);
 
-      if (loginResult === 'no-user') {
-        return res.status(404).send("Cannot find user");
-      } else if (loginResult === 'invalid-password') {
-        return res.status(403).send("Invalid password");
+      if (loginResult === 'no-user' || loginResult === 'invalid-password') {
+        return res.status(403).send("Invalid user or password");
       } else if (loginResult === 'no-pwd-hash-method') {
         return res.status(404).send("Missing 'getUserPasswordHash' method in adapter");
       }
@@ -150,6 +156,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
     app.get('/persona/auth/callback/:provider', async (req, res: Response) => {
       const code = req.query.code as string;
       const storageMethod = req.query.state as TokenStorageMethod || 'cookie';
+      const redirectUri = req.query.redirect_uri as string | undefined;
 
       const provider = req.params.provider as OAuthProvider;
       const credentials = this.config.credentials[provider];
@@ -163,7 +170,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       }
 
       try {
-        const loginResult = await this.personaService.exchangeOAuthCodeForJwt(provider, code, credentials, this.buildRedirectUri(provider));
+        const loginResult = await this.personaService.exchangeOAuthCodeForJwt(provider, code, credentials, redirectUri || this.buildRedirectUri(provider));
 
         switch (loginResult) {
           case 'create-user-error':
@@ -200,11 +207,11 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       res.cookie('token', loginResult.accessToken, { httpOnly: true });
 
       if (redirect) {
-        if (!this.frontendUrl) {
+        if (!this.clientUrls || this.clientUrls?.length === 0) {
           return res.status(500).send('No frontendUrl provided');
         }
 
-        res.redirect(this.frontendUrl);
+        res.redirect(this.clientUrls[0]);
       } else {
         res.send('Logged in');
       }

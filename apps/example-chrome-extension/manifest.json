@@ -12,8 +12,13 @@
     "default_popup": "index.html"
   },
   "permissions": [
-    "contextMenus"
+    "contextMenus",
+    "identity"
   ],
+  "oauth2": {
+    "client_id": "20470148463-7eti8one0fasdgmuuga6mm5jbe0ul4tr.apps.googleusercontent.com.apps.googleusercontent.com",
+    "scopes":["email", "profile"]
+  },
 
   "icons": {
     "16": "/icons/favicon-16x16.png",

@@ -14,10 +14,7 @@ export function PersonaProvider<U extends BaseUserType = BaseUserType>({
 }: React.PropsWithChildren<ConfigContextProps>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ConfigContext.Provider value={{
-        storageMethod: 'cookie',
-        ...props,
-      }}>
+      <ConfigContext.Provider value={props}>
         <ThemeProvider theme={{ ...defaultTheme, ...props.theme } || defaultTheme}>
           <SessionProvider<U>>
             {children}

@@ -28,7 +28,7 @@ interface Props {
 }
 
 export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
-  const { apiUrl, onRegister, storageMethod } = useConfig();
+  const { apiUrl, onRegister } = useConfig();
   const { login } = useSession();
   const { isFetching } = useStatus();
 
@@ -42,7 +42,7 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
   })
 
   const onSubmit = useAttempt(async (data: LoginEmailPasswordSchema) => {
-    const { accessToken } = await loginEmailPassword(apiUrl, data.email!, data.password, storageMethod!);
+    const { accessToken } = await loginEmailPassword(apiUrl, data.email!, data.password);
 
     await login(accessToken);
   })

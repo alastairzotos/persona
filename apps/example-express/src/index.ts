@@ -12,7 +12,7 @@ app.use(express.json());
 const persona = new Persona<User>({
   adapter: new MyAdapter(),
   host: 'http://localhost:3001',
-  frontendUrl: 'http://localhost:3003',
+  clientUrls: ['http://localhost:3003', 'chrome-extension://eoceocihooblilkhooglhnlojidpamdp'],
   jwtSigningKey: process.env.JWT_SIGNING_KEY!,
   config: {
     emailPasswordConfig: {

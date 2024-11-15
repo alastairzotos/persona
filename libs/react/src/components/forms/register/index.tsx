@@ -19,7 +19,7 @@ const RegisterButton = styled(Button)({
 })
 
 const RegisterFormInner: React.FC = () => {
-  const { apiUrl, storageMethod } = useConfig();
+  const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
   const { config, isFetchingConfig } = useFetchConfig();
@@ -34,7 +34,7 @@ const RegisterFormInner: React.FC = () => {
   })
 
   const onSubmit = useAttempt(async (data: RegisterEmailPasswordSchema) => {
-    const { accessToken } = await registerEmailPassword(apiUrl, data.email!, data.password!, data.details!, storageMethod!);
+    const { accessToken } = await registerEmailPassword(apiUrl, data.email!, data.password!, data.details!);
 
     await login(accessToken);
   })

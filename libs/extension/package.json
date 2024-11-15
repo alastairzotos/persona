@@ -1,0 +1,22 @@
+{
+  "name": "@bitmetro/persona-extension",
+  "version": "2.2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"No tests specified\"",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "yarn build -- --watch"
+  },
+  "devDependencies": {
+    "@bitmetro/persona-types": "*",
+    "@types/chrome": "^0.0.283",
+    "@types/jsonwebtoken": "^9.0.7",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+}

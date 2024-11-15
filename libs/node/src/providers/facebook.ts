@@ -15,14 +15,14 @@ export class FacebookOAuthProvider implements OAuthHandler {
   }
 
   async exchangeOAuthCodeForAccessToken(code: string, credentials: { id: string; secret: string; }, redirectUri: string): Promise<string | null> {
-    try {
-      const data = await fetch(`https://graph.facebook.com/v10.0/oauth/access_token?code=${code}&client_id=${credentials.id}&client_secret=${credentials.secret}&redirect_uri=${redirectUri}`)
-        .then(res => res.json());
+    const data = await fetch(`https://graph.facebook.com/v10.0/oauth/access_token?code=${code}&client_id=${credentials.id}&client_secret=${credentials.secret}&redirect_uri=${redirectUri}`)
+      .then(res => res.json());
 
-      return data.access_token as string;
-    } catch {
-      return null;
+    if (data.error) {
+      throw new Error(data.error.message);
     }
+    
+    return data.access_token as string;
   }
 
   async verifyAccessToken(providerAccessToken: string): Promise<OAuthVerificationDetails | null> {

@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@bitmetro/persona-react': path.resolve(__dirname, '..', '..', 'libs', 'react', 'dist'),
+      '@bitmetro/persona-extension': path.resolve(__dirname, '..', '..', 'libs', 'extension', 'dist'),
       'react': path.resolve(__dirname, 'node_modules/react'),
     },
   },

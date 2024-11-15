@@ -15,25 +15,25 @@ export class GoogleOAuthProvider implements OAuthHandler {
   }
 
   async exchangeOAuthCodeForAccessToken(code: string, credentials: { id: string; secret: string; }, redirectUri: string): Promise<string | null> {
-    try {
-      const data = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code,
-          client_id: credentials.id,
-          client_secret: credentials.secret,
-          redirect_uri: redirectUri,
-          grant_type: 'authorization_code',
-        })
-      }).then((res) => res.json());
+    const data = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code,
+        client_id: credentials.id,
+        client_secret: credentials.secret,
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code',
+      })
+    }).then((res) => res.json());
 
-      return data.access_token as string;
-    } catch {
-      return null;
+    if (data.error) {
+      throw new Error(data.error);
     }
+
+    return data.access_token as string;
   }
 
   async verifyAccessToken(providerAccessToken: string): Promise<OAuthVerificationDetails | null> {
