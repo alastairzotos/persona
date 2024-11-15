@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { PersonaExtension } from "@bitmetro/persona-extension";
+import { PersonaChrome } from "@bitmetro/persona-chrome";
 
 interface Props {
-  persona: PersonaExtension<any>;
+  persona: PersonaChrome<any>;
   onSuccess: (user: any) => void;
   onCancel: () => void;
 }

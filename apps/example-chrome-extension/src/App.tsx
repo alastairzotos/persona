@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { PersonaExtension } from '@bitmetro/persona-extension';
+import { PersonaChrome } from '@bitmetro/persona-chrome';
 import { LoginForms } from './forms/login';
 import { RegisterForm } from './forms/register';
 
-const persona = new PersonaExtension<{ _id: string }>('http://localhost:3001');
+const persona = new PersonaChrome<{ _id: string }>('http://localhost:3001');
 
 const fetchSecretData = async () => {
   const res = await fetch('http://localhost:3001/secret', {

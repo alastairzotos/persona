@@ -1,8 +1,8 @@
-import { PersonaExtension } from "@bitmetro/persona-extension";
+import { PersonaChrome } from "@bitmetro/persona-chrome";
 import { LoginEmailPasswordForm } from "./login-email-password";
 
 interface Props {
-  persona: PersonaExtension<any>;
+  persona: PersonaChrome<any>;
   onSuccess: (user: any) => void;
 }
 

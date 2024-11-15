@@ -1,6 +1,6 @@
 {
-  "name": "@bitmetro/persona-extension",
-  "version": "2.4.1",
+  "name": "@bitmetro/persona-chrome",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",

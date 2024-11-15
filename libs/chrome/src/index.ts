@@ -12,7 +12,7 @@ import * as jwt from 'jsonwebtoken';
 
 const LOCAL_STORAGE_KEY = '@bitmetro/persona-key';
 
-export class PersonaExtension<U extends BaseUserType = BaseUserType> {
+export class PersonaChrome<U extends BaseUserType = BaseUserType> {
   private publicConfig?: PublicConfig;
   private accessToken: string | null = null;
   private loggedInUser: U | null = null;
