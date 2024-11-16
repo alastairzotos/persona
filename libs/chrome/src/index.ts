@@ -52,11 +52,11 @@ export class PersonaChrome<U extends BaseUserType = BaseUserType> {
       return [];
     }
 
+    modes.push(...Object.keys(this.publicConfig.credentials) as OAuthProvider[]);
+
     if (this.publicConfig.emailPasswordConfig) {
       modes.push('email-password');
     }
-
-    modes.push(...Object.keys(this.publicConfig.credentials) as OAuthProvider[]);
 
     return modes;
   }
