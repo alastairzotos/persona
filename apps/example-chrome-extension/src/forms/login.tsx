@@ -13,13 +13,13 @@ export const LoginForms: React.FC<Props> = ({ persona, onSuccess }) => {
         <div key={mode}>
           {mode === 'google' && (
             <div>
-              <button onClick={async () => onSuccess(await persona.handleOAuthLogin('google'))}>Google login</button>
+              <button onClick={async () => onSuccess(await persona.loginOAuth('google'))}>Google login</button>
             </div>
           )}
 
           {mode === 'facebook' && (
             <div>
-              <button onClick={async () => onSuccess(await persona.handleOAuthLogin('facebook'))}>Facebook login</button>
+              <button onClick={async () => onSuccess(await persona.loginOAuth('facebook'))}>Facebook login</button>
             </div>
           )}
 

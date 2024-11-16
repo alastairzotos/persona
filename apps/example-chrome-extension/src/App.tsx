@@ -16,13 +16,16 @@ const fetchSecretData = async () => {
 }
 
 function App() {
+  const [personaReady, setPersonaReady] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [secretData, setSecretData] = useState('');
 
   useEffect(() => {
-    persona.init()
-    setUser(persona.getLoggedInUser());
+    persona.init().then(() => {
+      setPersonaReady(true);
+      setUser(persona.getLoggedInUser());
+    });
   }, []);
 
   const handleLogout = () => {
@@ -51,7 +54,7 @@ function App() {
     <>
       <h3>Hello {user?.firstName || 'Stranger'}</h3>
       
-      {persona.isReady() && !user && (
+      {personaReady && !user && (
         <>
           <LoginForms persona={persona} onSuccess={setUser} />
           <button onClick={() => setRegistering(true)}>Register</button>

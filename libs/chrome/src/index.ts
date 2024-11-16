@@ -124,7 +124,7 @@ export class PersonaChrome<U extends BaseUserType = BaseUserType> {
     return this.loggedInUser;
   }
 
-  async handleOAuthLogin(provider: OAuthProvider) {
+  async loginOAuth(provider: OAuthProvider) {
     return new Promise<U | null>((resolve) => {
       chrome.identity.launchWebAuthFlow(
         {
