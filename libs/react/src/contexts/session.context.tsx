@@ -24,9 +24,10 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
   const { apiUrl, onLogin, onLogout } = useConfig<U>();
 
   useEffect(() => {
-    checkAuth<U>(apiUrl).then(status => setLoggedInUser(status.user));
-
-    setInitialised(true);
+    checkAuth<U>(apiUrl).then(status => {
+      setLoggedInUser(status.user);
+      setInitialised(true);
+    });
   }, [])
 
   const login = async (accessToken: string) => {
