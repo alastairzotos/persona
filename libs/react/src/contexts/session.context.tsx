@@ -15,6 +15,7 @@ export const SessionContext = React.createContext<SessionContextProps>({
 export const useSession = () => React.useContext(SessionContext);
 
 const LOCAL_STORAGE_KEY = '@bitmetro/persona-key';
+const LOCAL_STORAGE_USER = '@bitmetro/persona-user';
 
 export const getAccessToken = () => localStorage.getItem(LOCAL_STORAGE_KEY);
 
@@ -24,9 +25,15 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
   const { apiUrl, onLogin, onLogout } = useConfig<U>();
 
   useEffect(() => {
+    const persisted = localStorage.getItem(LOCAL_STORAGE_USER);
+    if (persisted) {
+      setLoggedInUser(JSON.parse(persisted));
+    }
+
     checkAuth<U>(apiUrl).then(status => {
       setLoggedInUser(status.user);
       setInitialised(true);
+      localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
     });
   }, [])
 
@@ -34,6 +41,7 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
     const status = await checkAuth<U>(apiUrl);
 
     setLoggedInUser(status.user);
+    localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
 
     if (status.user) {
       onLogin?.(status.user);
@@ -44,6 +52,7 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
     await handleLogout(apiUrl);
 
     setLoggedInUser(undefined);
+    localStorage.removeItem(LOCAL_STORAGE_USER);
     onLogout?.();
   }
 
