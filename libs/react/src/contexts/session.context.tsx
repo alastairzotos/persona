@@ -26,14 +26,19 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
 
   useEffect(() => {
     const persisted = localStorage.getItem(LOCAL_STORAGE_USER);
-    if (persisted) {
+    if (persisted && persisted !== 'undefined') {
       setLoggedInUser(JSON.parse(persisted));
     }
 
     checkAuth<U>(apiUrl).then(status => {
       setLoggedInUser(status.user);
       setInitialised(true);
-      localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
+
+      if (status && status.user) {
+        localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
+      } else {
+        localStorage.removeItem(LOCAL_STORAGE_USER);
+      }
     });
   }, [])
 
@@ -41,9 +46,9 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
     const status = await checkAuth<U>(apiUrl);
 
     setLoggedInUser(status.user);
-    localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
-
+    
     if (status.user) {
+      localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
       onLogin?.(status.user);
     }
   };
