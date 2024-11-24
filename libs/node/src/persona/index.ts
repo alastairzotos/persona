@@ -205,7 +205,11 @@ export class Persona<U extends BaseUserType = BaseUserType> {
 
   private loginSuccess(storageMethod: TokenStorageMethod, loginResult: AccessTokenResponse, res: Response, redirect = false) {
     if (storageMethod === 'cookie') {
-      res.cookie('token', loginResult.accessToken, { httpOnly: true });
+      res.cookie('token', loginResult.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        sameSite: 'none',
+      });
 
       if (redirect) {
         if (!this.clientUrls || this.clientUrls?.length === 0) {
