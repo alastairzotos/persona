@@ -13,16 +13,13 @@ import { useSession } from "../../../contexts/session.context";
 import { Wrapper } from "../../wrapper";
 import { useAttempt, useFetchConfig } from "../../../hooks";
 import { FormErrorMessage, Input } from "../../primitives/forms";
+import { LoginProps } from "../../../models";
 
 const RegisterButton = styled(Button)({
   marginTop: 12,
 })
 
-interface Props {
-  fwdUrl?: string;
-}
-
-const RegisterFormInner: React.FC<Props> = ({ fwdUrl }) => {
+const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl }) => {
   const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
@@ -155,7 +152,7 @@ const RegisterFormInner: React.FC<Props> = ({ fwdUrl }) => {
   )
 }
 
-export const RegisterForm: React.FC<Props> = (props) => {
+export const RegisterForm: React.FC<LoginProps> = (props) => {
   return (
     <StatusProvider>
       <RegisterFormInner {...props} />

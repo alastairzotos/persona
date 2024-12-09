@@ -155,11 +155,13 @@ export class Persona<U extends BaseUserType = BaseUserType> {
 
     app.get('/persona/auth/callback/:provider', async (req, res: Response) => {
       const code = req.query.code as string;
-      const storageMethod = req.query.state as TokenStorageMethod || 'cookie';
       const redirectUri = req.query.redirect_uri as string | undefined;
-
       const provider = req.params.provider as OAuthProvider;
       const credentials = this.config.credentials[provider];
+
+      // const storageMethod = req.query.state as TokenStorageMethod || 'cookie';
+      const state = req.query.state as string;
+      const { storageMethod, fwdUrl } = JSON.parse(atob(state)) as { storageMethod: TokenStorageMethod, fwdUrl?: string };
 
       if (!code) {
         return res.status(400).send('Missing code');
@@ -183,7 +185,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
             return res.status(500).send("OAuth error");
 
           default:
-            this.loginSuccess(storageMethod, loginResult, res, true);
+            this.loginSuccess(storageMethod, loginResult, res, true, fwdUrl);
         }
       } catch (e) {
         console.error(e);
@@ -194,16 +196,17 @@ export class Persona<U extends BaseUserType = BaseUserType> {
     app.get('/persona/auth/:provider', async (req, res) => {
       const provider = req.params.provider as OAuthProvider;
       const storageMethod = req.query.storage as TokenStorageMethod || 'cookie';
+      const fwdUrl = req.query.fwdUrl as string;
       const clientId = this.config.credentials[provider]?.id!;
       const redirectUri = req.query.redirect_uri as string | undefined;
 
-      const authUrl = this.personaService.getOAuthProviderLoginUrl(provider, storageMethod, clientId, redirectUri || this.buildRedirectUri(provider));
+      const authUrl = this.personaService.getOAuthProviderLoginUrl(provider, clientId, redirectUri || this.buildRedirectUri(provider), storageMethod, fwdUrl);
 
       res.redirect(authUrl);
     });
   }
 
-  private loginSuccess(storageMethod: TokenStorageMethod, loginResult: AccessTokenResponse, res: Response, redirect = false) {
+  private loginSuccess(storageMethod: TokenStorageMethod, loginResult: AccessTokenResponse, res: Response, redirect = false, fwdUrl?: string) {
     if (storageMethod === 'cookie') {
       res.cookie('token', loginResult.accessToken, {
         httpOnly: true,
@@ -212,11 +215,11 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       });
 
       if (redirect) {
-        if (!this.clientUrls || this.clientUrls?.length === 0) {
+        if ((!this.clientUrls || this.clientUrls?.length === 0) && !fwdUrl) {
           return res.status(500).send('No frontendUrl provided');
         }
 
-        res.redirect(this.clientUrls[0]);
+        res.redirect(this.clientUrls![0] + fwdUrl);
       } else {
         res.send('Logged in');
       }

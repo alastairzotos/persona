@@ -10,6 +10,7 @@ import { Button, Container } from "../../../primitives";
 import { useSession } from "../../../../contexts/session.context";
 import { useAttempt } from "../../../../hooks";
 import { FormErrorMessage, Input } from "../../../primitives/forms";
+import { LoginProps } from "../../../../models";
 
 const PromptContainer = styled('div')(({ theme }) => ({
   color: theme.textColor,
@@ -23,9 +24,8 @@ const LoginButton = styled(Button)({
   marginTop: 12,
 })
 
-interface Props {
+interface Props extends LoginProps {
   showPrompt: boolean;
-  fwdUrl?: string;
 }
 
 export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt, fwdUrl }) => {

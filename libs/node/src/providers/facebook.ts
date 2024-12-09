@@ -10,8 +10,8 @@ const facebookFieldsToUserDetails = (info: any): Partial<Record<UserDetail, stri
 }
 
 export class FacebookOAuthProvider implements OAuthHandler {
-  getLoginUrl(storageMethod: TokenStorageMethod, clientId: string, redirectUri: string): string {
-    return `https://www.facebook.com/v10.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=email,public_profile&state=${storageMethod}`;
+  getLoginUrl(clientId: string, redirectUri: string): string {
+    return `https://www.facebook.com/v10.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=email,public_profile`;
   }
 
   async exchangeOAuthCodeForAccessToken(code: string, credentials: { id: string; secret: string; }, redirectUri: string): Promise<string | null> {

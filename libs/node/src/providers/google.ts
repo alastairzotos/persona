@@ -10,8 +10,8 @@ const googleFieldsToUserDetails = (info: any): Partial<Record<UserDetail, string
 }
 
 export class GoogleOAuthProvider implements OAuthHandler {
-  getLoginUrl(storageMethod: TokenStorageMethod, clientId: string, redirectUri: string): string {
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20profile%20email&state=${storageMethod}`;
+  getLoginUrl(clientId: string, redirectUri: string): string {
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20profile%20email`;
   }
 
   async exchangeOAuthCodeForAccessToken(code: string, credentials: { id: string; secret: string; }, redirectUri: string): Promise<string | null> {

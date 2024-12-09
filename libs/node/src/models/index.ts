@@ -14,7 +14,7 @@ export interface OAuthVerificationDetails {
 }
 
 export interface OAuthHandler {
-  getLoginUrl(storageMethod: TokenStorageMethod, clientId: string, redirectUri: string): string;
+  getLoginUrl(clientId: string, redirectUri: string): string;
   exchangeOAuthCodeForAccessToken(code: string, credentials: Credential<false>, redirectUri: string): Promise<string | null>;
   verifyAccessToken(providerAccessToken: string): Promise<OAuthVerificationDetails | null>;
 }

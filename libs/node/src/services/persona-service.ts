@@ -76,8 +76,12 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  getOAuthProviderLoginUrl(provider: OAuthProvider, storageMethod: TokenStorageMethod, clientId: string, redirectUri: string) {
-    return providers[provider].getLoginUrl(storageMethod, clientId, redirectUri);
+  getOAuthProviderLoginUrl(provider: OAuthProvider, clientId: string, redirectUri: string, storageMethod: TokenStorageMethod, fwdUrl?: string) {
+    const baseUrl = providers[provider].getLoginUrl(clientId, redirectUri);
+
+    const stateParam = btoa(JSON.stringify({ storageMethod, fwdUrl }));
+
+    return baseUrl + `&state=${stateParam}`;
   }
 
   async exchangeOAuthCodeForJwt(provider: OAuthProvider, code: string, credentials: Credential<false>, redirectUri: string): Promise<LoginResult> {

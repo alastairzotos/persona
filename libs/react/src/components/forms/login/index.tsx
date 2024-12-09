@@ -8,12 +8,9 @@ import { FacebookLogin } from './modes/facebook';
 import { Wrapper } from '../../wrapper';
 import { useFetchConfig } from '../../../hooks';
 import { StatusProvider } from '../../../contexts/status.context';
+import { LoginProps } from '../../../models';
 
-interface Props {
-  fwdUrl?: string;
-}
-
-export const LoginForm: React.FC<Props> = ({ fwdUrl }) => {
+export const LoginForm: React.FC<LoginProps> = ({ fwdUrl }) => {
   const { config, isFetchingConfig } = useFetchConfig();
   const encodedFwdUrl = fwdUrl ? encodeURIComponent(fwdUrl) : undefined;
 
@@ -21,7 +18,7 @@ export const LoginForm: React.FC<Props> = ({ fwdUrl }) => {
     return <p>Loading...</p>;
   }
 
-  const credentialButton: Record<OAuthProvider, React.FC> = {
+  const credentialButton: Record<OAuthProvider, React.FC<LoginProps>> = {
     google: GoogleLogin,
     facebook: FacebookLogin,
   }
@@ -32,7 +29,7 @@ export const LoginForm: React.FC<Props> = ({ fwdUrl }) => {
         {Object.keys(config.credentials).map((provider) => {
           const Component = credentialButton[provider as OAuthProvider];
 
-          return <Component key={provider} />;
+          return <Component key={provider} fwdUrl={encodedFwdUrl} />;
         })}
 
         {!!config.emailPasswordConfig && (
