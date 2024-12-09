@@ -30,7 +30,7 @@ export async function checkAuth<U extends BaseUserType = BaseUserType>(apiUrl: s
     const { data } = await axios.get(`${apiUrl}/persona/status`, {
       withCredentials: true,
       headers: {
-        Authorization: `Bearer ${getAccessToken()}`
+        Authorization: `Bearer ${getAccessToken()}`,
       },
     });
 

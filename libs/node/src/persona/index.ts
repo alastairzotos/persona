@@ -210,7 +210,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
     if (storageMethod === 'cookie') {
       res.cookie('token', loginResult.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
+        secure: true,
         sameSite: 'none',
       });
 
