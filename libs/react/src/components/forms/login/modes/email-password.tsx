@@ -25,9 +25,10 @@ const LoginButton = styled(Button)({
 
 interface Props {
   showPrompt: boolean;
+  fwdUrl?: string;
 }
 
-export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
+export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt, fwdUrl }) => {
   const { apiUrl, onRegister } = useConfig();
   const { login } = useSession();
   const { isFetching } = useStatus();
@@ -42,9 +43,8 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
   })
 
   const onSubmit = useAttempt(async (data: LoginEmailPasswordSchema) => {
-    const { accessToken } = await loginEmailPassword(apiUrl, data.email!, data.password);
-
-    await login(accessToken);
+    await loginEmailPassword(apiUrl, data.email!, data.password);
+    await login(fwdUrl);
   })
 
   return (
@@ -106,7 +106,7 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt }) => {
             Login
           </LoginButton>
 
-          <Button variant="link" onClick={onRegister}>
+          <Button variant="link" onClick={() => onRegister?.(fwdUrl)}>
             Register
           </Button>
         </Container>

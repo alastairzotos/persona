@@ -9,8 +9,13 @@ import { Wrapper } from '../../wrapper';
 import { useFetchConfig } from '../../../hooks';
 import { StatusProvider } from '../../../contexts/status.context';
 
-export const LoginForm: React.FC = () => {
+interface Props {
+  fwdUrl?: string;
+}
+
+export const LoginForm: React.FC<Props> = ({ fwdUrl }) => {
   const { config, isFetchingConfig } = useFetchConfig();
+  const encodedFwdUrl = fwdUrl ? encodeURIComponent(fwdUrl) : undefined;
 
   if (!config || isFetchingConfig) {
     return <p>Loading...</p>;
@@ -32,6 +37,7 @@ export const LoginForm: React.FC = () => {
 
         {!!config.emailPasswordConfig && (
           <EmailPasswordLogin
+            fwdUrl={encodedFwdUrl}
             showPrompt={!!config.credentials && Object.keys(config.credentials).length > 0}
           />
         )}

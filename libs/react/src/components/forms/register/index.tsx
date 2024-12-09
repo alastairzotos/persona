@@ -18,7 +18,11 @@ const RegisterButton = styled(Button)({
   marginTop: 12,
 })
 
-const RegisterFormInner: React.FC = () => {
+interface Props {
+  fwdUrl?: string;
+}
+
+const RegisterFormInner: React.FC<Props> = ({ fwdUrl }) => {
   const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
@@ -34,9 +38,8 @@ const RegisterFormInner: React.FC = () => {
   })
 
   const onSubmit = useAttempt(async (data: RegisterEmailPasswordSchema) => {
-    const { accessToken } = await registerEmailPassword(apiUrl, data.email!, data.password!, data.details!);
-
-    await login(accessToken);
+    await registerEmailPassword(apiUrl, data.email!, data.password!, data.details!);
+    await login(fwdUrl ? decodeURIComponent(fwdUrl) : undefined);
   })
 
   if (!config || isFetchingConfig) {
@@ -152,10 +155,10 @@ const RegisterFormInner: React.FC = () => {
   )
 }
 
-export const RegisterForm: React.FC = () => {
+export const RegisterForm: React.FC<Props> = (props) => {
   return (
     <StatusProvider>
-      <RegisterFormInner />
+      <RegisterFormInner {...props} />
     </StatusProvider>
   )
 }

@@ -5,7 +5,7 @@ import { PersonaContext } from "./persona.context";
 import { checkAuth, handleLogout } from "../requests/auth";
 
 export interface SessionContextProps {
-  login(accessToken: string): Promise<void>;
+  login(fwdUrl?: string): Promise<void>;
 }
 
 export const SessionContext = React.createContext<SessionContextProps>({
@@ -42,14 +42,14 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
     });
   }, [])
 
-  const login = async (accessToken: string) => {
+  const login = async (fwdUrl?: string) => {
     const status = await checkAuth<U>(apiUrl);
 
     setLoggedInUser(status.user);
     
     if (status.user) {
       localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
-      onLogin?.(status.user);
+      onLogin?.(status.user, fwdUrl ? decodeURIComponent(fwdUrl) : undefined);
     }
   };
 

@@ -5,8 +5,8 @@ import { defaultTheme } from '../theme';
 
 export interface ConfigContextProps<U extends BaseUserType = BaseUserType> {
   apiUrl: string;
-  onRegister?: () => void;
-  onLogin?: (user: U) => void;
+  onRegister?: (fwdUrl?: string) => void;
+  onLogin?: (user: U, fwdUrl?: string) => void;
   onLogout?: () => void;
   theme?: Partial<DefaultTheme>;
 }

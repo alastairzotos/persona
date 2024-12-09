@@ -1,5 +1,8 @@
 import { RegisterForm } from '@bitmetro/persona-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  const params = useSearchParams();
+
+  return <RegisterForm fwdUrl={params.get('fwdUrl') || undefined} />;
 }
