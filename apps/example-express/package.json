@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "nodemon -q src/index.ts --watch ../../libs/node/dist"
+    "dev": "nodemon -q src/index.ts ../../libs/node/dist --watch"
   },
   "devDependencies": {
     "@bitmetro/persona-node": "*",

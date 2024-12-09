@@ -18,7 +18,7 @@ export class MyAdapter implements PersonaAdapter<User> {
     console.log('default:', registerState);
     return await mockDb.createUser({
       email,
-      firstName: details.first_name!,
+      firstName: 'test',//details.first_name!,
       passwordHash,
     })
   }
