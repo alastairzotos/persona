@@ -10,9 +10,8 @@ import { useFetchConfig } from '../../../hooks';
 import { StatusProvider } from '../../../contexts/status.context';
 import { LoginProps } from '../../../models';
 
-export const LoginForm: React.FC<LoginProps> = ({ fwdUrl }) => {
+export const LoginForm: React.FC<LoginProps> = (props) => {
   const { config, isFetchingConfig } = useFetchConfig();
-  const encodedFwdUrl = fwdUrl ? encodeURIComponent(fwdUrl) : undefined;
 
   if (!config || isFetchingConfig) {
     return <p>Loading...</p>;
@@ -29,12 +28,12 @@ export const LoginForm: React.FC<LoginProps> = ({ fwdUrl }) => {
         {Object.keys(config.credentials).map((provider) => {
           const Component = credentialButton[provider as OAuthProvider];
 
-          return <Component key={provider} fwdUrl={encodedFwdUrl} />;
+          return <Component key={provider} {...props} />;
         })}
 
         {!!config.emailPasswordConfig && (
           <EmailPasswordLogin
-            fwdUrl={encodedFwdUrl}
+            {...props}
             showPrompt={!!config.credentials && Object.keys(config.credentials).length > 0}
           />
         )}

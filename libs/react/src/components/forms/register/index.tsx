@@ -19,7 +19,8 @@ const RegisterButton = styled(Button)({
   marginTop: 12,
 })
 
-const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl }) => {
+
+const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl, registerState }) => {
   const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
@@ -35,7 +36,7 @@ const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl }) => {
   })
 
   const onSubmit = useAttempt(async (data: RegisterEmailPasswordSchema) => {
-    await registerEmailPassword(apiUrl, data.email!, data.password!, data.details!);
+    await registerEmailPassword(apiUrl, data.email!, data.password!, data.details!, registerState);
     await login(fwdUrl ? decodeURIComponent(fwdUrl) : undefined);
   })
 

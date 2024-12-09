@@ -9,8 +9,8 @@ import {
 } from "@bitmetro/persona-types";
 import { getAccessToken } from '../contexts/session.context';
 
-export const registerEmailPassword = async (apiUrl: string, email: string, password: string, details: UserDetails): Promise<AccessTokenResponse> => {
-  const { data } = await axios.post(`${apiUrl}/persona/register?storage=cookie`, { email, password, details } as RegisterEmailPasswordDto, { withCredentials: true });
+export const registerEmailPassword = async (apiUrl: string, email: string, password: string, details: UserDetails, registerState?: string): Promise<AccessTokenResponse> => {
+  const { data } = await axios.post(`${apiUrl}/persona/register?storage=cookie`, { email, password, details, registerState } as RegisterEmailPasswordDto, { withCredentials: true });
 
   return data;
 }

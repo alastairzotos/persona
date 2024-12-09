@@ -27,7 +27,7 @@ export default function Home() {
           : <p>Hello stranger</p>
       }
 
-      <LoginForm fwdUrl="/forward-page" />
+      <LoginForm fwdUrl="/forward-page" registerState="user-admin" />
 
       <Button className='mt-8' onClick={logout}>Logout</Button>
 

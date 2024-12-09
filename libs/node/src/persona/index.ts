@@ -115,11 +115,12 @@ export class Persona<U extends BaseUserType = BaseUserType> {
         email,
         password,
         details,
+        registerState,
       } = req.body;
 
       const storageMethod = req.query.storage as TokenStorageMethod || 'cookie';
 
-      const loginResult = await this.personaService.registerWithEmailPassword(email, password, details);
+      const loginResult = await this.personaService.registerWithEmailPassword(email, password, details, registerState);
 
       if (loginResult === 'existing-user') {
         return res.status(409).send("User already exists");
@@ -158,10 +159,9 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       const redirectUri = req.query.redirect_uri as string | undefined;
       const provider = req.params.provider as OAuthProvider;
       const credentials = this.config.credentials[provider];
-
-      // const storageMethod = req.query.state as TokenStorageMethod || 'cookie';
       const state = req.query.state as string;
-      const { storageMethod, fwdUrl } = JSON.parse(atob(state)) as { storageMethod: TokenStorageMethod, fwdUrl?: string };
+
+      const { storageMethod, fwdUrl, registerState } = JSON.parse(atob(state)) as { storageMethod: TokenStorageMethod, fwdUrl?: string, registerState?: string };
 
       if (!code) {
         return res.status(400).send('Missing code');
@@ -172,7 +172,13 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       }
 
       try {
-        const loginResult = await this.personaService.exchangeOAuthCodeForJwt(provider, code, credentials, redirectUri || this.buildRedirectUri(provider));
+        const loginResult = await this.personaService.exchangeOAuthCodeForJwt(
+          provider,
+          code,
+          credentials,
+          redirectUri || this.buildRedirectUri(provider),
+          registerState,
+        );
 
         switch (loginResult) {
           case 'create-user-error':
@@ -197,10 +203,18 @@ export class Persona<U extends BaseUserType = BaseUserType> {
       const provider = req.params.provider as OAuthProvider;
       const storageMethod = req.query.storage as TokenStorageMethod || 'cookie';
       const fwdUrl = req.query.fwdUrl as string;
+      const registerState = req.query.registerState as string;
       const clientId = this.config.credentials[provider]?.id!;
       const redirectUri = req.query.redirect_uri as string | undefined;
 
-      const authUrl = this.personaService.getOAuthProviderLoginUrl(provider, clientId, redirectUri || this.buildRedirectUri(provider), storageMethod, fwdUrl);
+      const authUrl = this.personaService.getOAuthProviderLoginUrl(
+        provider,
+        clientId,
+        redirectUri || this.buildRedirectUri(provider),
+        storageMethod,
+        fwdUrl,
+        registerState,
+      );
 
       res.redirect(authUrl);
     });

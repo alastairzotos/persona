@@ -38,7 +38,7 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  async registerWithEmailPassword(email: string, password: string, details: UserDetails): Promise<AccessTokenResponse | 'existing-user' | 'no-create-method'> {
+  async registerWithEmailPassword(email: string, password: string, details: UserDetails, registerState?: string): Promise<AccessTokenResponse | 'existing-user' | 'no-create-method'> {
     const existing = await this.adapter.getUserByEmail(email);
 
     if (!!existing) {
@@ -49,7 +49,7 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
       return 'no-create-method';
     }
 
-    const user = await this.adapter.createUserWithPasswordHash(email, details, await this.hashPassword(password));
+    const user = await this.adapter.createUserWithPasswordHash(email, details, await this.hashPassword(password), registerState);
 
     return {
       accessToken: this.generateAccessToken(user)
@@ -76,15 +76,28 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     }
   }
 
-  getOAuthProviderLoginUrl(provider: OAuthProvider, clientId: string, redirectUri: string, storageMethod: TokenStorageMethod, fwdUrl?: string) {
+  getOAuthProviderLoginUrl(
+    provider: OAuthProvider,
+    clientId: string,
+    redirectUri: string,
+    storageMethod: TokenStorageMethod,
+    fwdUrl?: string,
+    registerState?: string,
+  ) {
     const baseUrl = providers[provider].getLoginUrl(clientId, redirectUri);
 
-    const stateParam = btoa(JSON.stringify({ storageMethod, fwdUrl }));
+    const stateParam = btoa(JSON.stringify({ storageMethod, fwdUrl, registerState }));
 
     return baseUrl + `&state=${stateParam}`;
   }
 
-  async exchangeOAuthCodeForJwt(provider: OAuthProvider, code: string, credentials: Credential<false>, redirectUri: string): Promise<LoginResult> {
+  async exchangeOAuthCodeForJwt(
+    provider: OAuthProvider,
+    code: string,
+    credentials: Credential<false>,
+    redirectUri: string,
+    registerState?: string,
+  ): Promise<LoginResult> {
     const accessToken = await providers[provider].exchangeOAuthCodeForAccessToken(code, credentials, redirectUri);
 
     if (accessToken === null) {
@@ -104,7 +117,8 @@ export class PersonaService<U extends BaseUserType = BaseUserType> {
     if (!user) {
       user = await this.adapter.createUser(
         email,
-        mapRecord(userDetails as Record<string, string>, (value) => value?.trim())
+        mapRecord(userDetails as Record<string, string>, (value) => value?.trim()),
+        registerState
       );
     }
 

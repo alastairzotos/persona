@@ -5,6 +5,7 @@ export interface RegisterEmailPasswordDto {
   email: string;
   password: string;
   details: UserDetails;
+  registerState?: string;
 }
 
 export interface LoginEmailPasswordRequestDto {

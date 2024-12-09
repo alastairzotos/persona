@@ -49,7 +49,7 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
     
     if (status.user) {
       localStorage.setItem(LOCAL_STORAGE_USER, JSON.stringify(status.user));
-      onLogin?.(status.user, fwdUrl ? decodeURIComponent(fwdUrl) : undefined);
+      onLogin?.(status.user, fwdUrl);
     }
   };
 

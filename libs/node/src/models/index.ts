@@ -2,8 +2,8 @@ import { AccessTokenResponse, BaseUserType, TokenStorageMethod, Credential, User
 
 export interface PersonaAdapter<U extends BaseUserType = BaseUserType> {
   getUserByEmail(email: string): Promise<U | undefined>;
-  createUser(email: string, details: UserDetails): Promise<U>;
-  createUserWithPasswordHash?(email: string, details: UserDetails, passwordHash: string): Promise<U>;
+  createUser(email: string, details: UserDetails, registerState?: string): Promise<U>;
+  createUserWithPasswordHash?(email: string, details: UserDetails, passwordHash: string, registerState?: string): Promise<U>;
   getUserPasswordHash?(user: U): Promise<string | undefined>;
   exchangeJwtPayloadForUser?(payload: U): Promise<U | undefined>;
 }

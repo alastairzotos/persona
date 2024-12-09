@@ -10,8 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <PersonaProvider
       apiUrl='http://localhost:3001'
       onRegister={(fwdUrl) => router.push(`/register?fwdUrl=${fwdUrl}`)}
-      // onLogin={(_, fwdUrl) => router.push(fwdUrl || '/')}
-      onLogin={(_, fwd) => console.log({ fwd })}
+      onLogin={(_, fwdUrl) => router.push(fwdUrl || '/')}
       theme={{
         brandColor: '#2c63e6'
       }}

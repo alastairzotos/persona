@@ -4,5 +4,5 @@ import { useSearchParams } from 'next/navigation';
 export default function RegisterPage() {
   const params = useSearchParams();
 
-  return <RegisterForm fwdUrl={params.get('fwdUrl') || undefined} />;
+  return <RegisterForm fwdUrl={params.get('fwdUrl') || undefined} registerState="user-admin" />;
 }

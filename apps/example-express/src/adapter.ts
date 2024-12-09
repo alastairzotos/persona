@@ -9,11 +9,13 @@ export class MyAdapter implements PersonaAdapter<User> {
     return await mockDb.getUserByEmail(email);
   }
 
-  async createUser(email: string, details: Partial<Record<UserDetail, string>>) {
+  async createUser(email: string, details: Partial<Record<UserDetail, string>>, registerState: string) {
+    console.log('oauth:', registerState);
     return await mockDb.createUser({ email, firstName: details.first_name! });
   }
 
-  async createUserWithPasswordHash(email: string, details: Partial<Record<UserDetail, string>>, passwordHash: string) {
+  async createUserWithPasswordHash(email: string, details: Partial<Record<UserDetail, string>>, passwordHash: string, registerState: string) {
+    console.log('default:', registerState);
     return await mockDb.createUser({
       email,
       firstName: details.first_name!,
