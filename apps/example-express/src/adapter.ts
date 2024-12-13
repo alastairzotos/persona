@@ -6,6 +6,7 @@ const mockDb = new MockDb();
 
 export class MyAdapter implements PersonaAdapter<User> {
   async getUserByEmail(email: string) {
+    console.log('revalidating');
     return await mockDb.getUserByEmail(email);
   }
 

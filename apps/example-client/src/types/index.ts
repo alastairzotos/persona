@@ -4,4 +4,5 @@ export interface User {
   _id: string;
   email: string;
   firstName: string;
+  randomThing: number;
 }

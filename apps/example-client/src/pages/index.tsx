@@ -12,7 +12,7 @@ const fetchSecretData = async () => {
 }
 
 export default function Home() {
-  const { loggedInUser, logout } = usePersona<User>();
+  const { loggedInUser, logout, revalidate } = usePersona<User>();
   const [secretData, setSecretData] = useState('');
 
   const handleRequestClick = async () => {
@@ -23,7 +23,7 @@ export default function Home() {
     <div>
       {
         loggedInUser
-          ? <p>Hello {loggedInUser.firstName}</p>
+          ? <p>Hello {loggedInUser.firstName} (Random thing: {loggedInUser.randomThing})</p>
           : <p>Hello stranger</p>
       }
 
@@ -32,6 +32,8 @@ export default function Home() {
       <Button className='mt-8' onClick={logout}>Logout</Button>
 
       <Button className='mt-8' onClick={handleRequestClick}>Request</Button>
+
+      <Button className='mt-8' onClick={revalidate}>Revalidate</Button>
       <p>Secret data: {secretData}</p>
     </div>
   )

@@ -29,7 +29,7 @@ interface Props extends LoginProps {
 }
 
 export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt, fwdUrl }) => {
-  const { apiUrl, onRegister } = useConfig();
+  const { apiUrl, onRegisterClick } = useConfig();
   const { login } = useSession();
   const { isFetching } = useStatus();
 
@@ -106,7 +106,7 @@ export const EmailPasswordLogin: React.FC<Props> = ({ showPrompt, fwdUrl }) => {
             Login
           </LoginButton>
 
-          <Button variant="link" onClick={() => onRegister?.(fwdUrl)}>
+          <Button variant="link" onClick={() => onRegisterClick?.(fwdUrl)}>
             Register
           </Button>
         </Container>

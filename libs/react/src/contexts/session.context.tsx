@@ -24,12 +24,7 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
   const [loggedInUser, setLoggedInUser] = useState<U | undefined>();
   const { apiUrl, onLogin, onLogout } = useConfig<U>();
 
-  useEffect(() => {
-    const persisted = localStorage.getItem(LOCAL_STORAGE_USER);
-    if (persisted && persisted !== 'undefined') {
-      setLoggedInUser(JSON.parse(persisted));
-    }
-
+  const revalidate = async () => {
     checkAuth<U>(apiUrl).then(status => {
       setLoggedInUser(status.user);
       setInitialised(true);
@@ -40,6 +35,15 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
         localStorage.removeItem(LOCAL_STORAGE_USER);
       }
     });
+  }
+
+  useEffect(() => {
+    const persisted = localStorage.getItem(LOCAL_STORAGE_USER);
+    if (persisted && persisted !== 'undefined') {
+      setLoggedInUser(JSON.parse(persisted));
+    }
+
+    revalidate();
   }, [])
 
   const login = async (fwdUrl?: string) => {
@@ -66,7 +70,8 @@ export function SessionProvider<U extends BaseUserType = BaseUserType>({ childre
       value={{
         initialised,
         loggedInUser,
-        logout
+        logout,
+        revalidate,
       }}
     >
       <SessionContext.Provider value={{ login }}>

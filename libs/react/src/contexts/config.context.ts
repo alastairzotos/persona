@@ -5,7 +5,7 @@ import { defaultTheme } from '../theme';
 
 export interface ConfigContextProps<U extends BaseUserType = BaseUserType> {
   apiUrl: string;
-  onRegister?: (fwdUrl?: string) => void;
+  onRegisterClick?: (fwdUrl?: string) => void;
   onLogin?: (user: U, fwdUrl?: string) => void;
   onLogout?: () => void;
   theme?: Partial<DefaultTheme>;
@@ -13,7 +13,7 @@ export interface ConfigContextProps<U extends BaseUserType = BaseUserType> {
 
 export const ConfigContext = React.createContext<ConfigContextProps>({
   apiUrl: '',
-  onRegister: () => {},
+  onRegisterClick: () => {},
   theme: defaultTheme,
 });
 
