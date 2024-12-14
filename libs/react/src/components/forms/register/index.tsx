@@ -2,7 +2,7 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import styled from 'styled-components'
-import { userDetailLabel } from "@bitmetro/persona-types";
+import { UserDetail, userDetailLabel } from "@bitmetro/persona-types";
 
 import { StatusProvider, useStatus } from "../../../contexts/status.context";
 import { useConfig } from "../../../contexts/config.context";
@@ -19,8 +19,12 @@ const RegisterButton = styled(Button)({
   marginTop: 12,
 })
 
+interface Props extends LoginProps {
+  email?: string;
+  lockEmail?: boolean;
+}
 
-const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl, registerState }) => {
+const RegisterFormInner: React.FC<Props> = ({ fwdUrl, registerState, email, lockEmail }) => {
   const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
@@ -32,7 +36,14 @@ const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl, registerState }) => {
     formState: { errors, isValid, isSubmitting }
   } = useForm<RegisterEmailPasswordSchema>({
     mode: "onChange",
-    resolver: zodResolver(registerEmailPasswordSchema)
+    resolver: zodResolver(registerEmailPasswordSchema),
+    values: {
+      email: email || '',
+      password: '',
+      repeatPassword: '',
+      details: config?.emailPasswordConfig?.userDetails
+        .reduce((acc, cur) => ({ ...acc, [cur]: '' }), {} as Record<UserDetail, string>),
+    }
   })
 
   const onSubmit = useAttempt(async (data: RegisterEmailPasswordSchema) => {
@@ -64,7 +75,7 @@ const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl, registerState }) => {
                   ref={ref}
                   placeholder="Your email"
                   invalid={!!errors.email}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || lockEmail}
                   {...field}
                 />
 
@@ -153,7 +164,7 @@ const RegisterFormInner: React.FC<LoginProps> = ({ fwdUrl, registerState }) => {
   )
 }
 
-export const RegisterForm: React.FC<LoginProps> = (props) => {
+export const RegisterForm: React.FC<Props> = (props) => {
   return (
     <StatusProvider>
       <RegisterFormInner {...props} />
