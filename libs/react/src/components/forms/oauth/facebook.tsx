@@ -1,9 +1,9 @@
 import React from "react";
-import { IconFacebook } from "../../../icons";
-import { SocialLoginButton } from "../../../primitives/social-login-button";
-import { useConfig } from "../../../../contexts/config.context";
-import { LoginProps } from "../../../../models";
-import { oauthLoginParams } from "../../../../utils";
+import { IconFacebook } from "../../icons";
+import { SocialLoginButton } from "../../primitives/social-login-button";
+import { useConfig } from "../../../contexts/config.context";
+import { LoginProps } from "../../../models";
+import { oauthLoginParams } from "../../../utils";
 
 export const FacebookLogin: React.FC<LoginProps> = (props) => {
   const { apiUrl } = useConfig();

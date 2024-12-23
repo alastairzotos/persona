@@ -1,14 +1,12 @@
 import React from 'react';
-import { OAuthProvider } from '@bitmetro/persona-types';
 
-import { EmailPasswordLogin } from './modes/email-password';
-import { GoogleLogin } from './modes/google';
-import { FacebookLogin } from './modes/facebook';
+import { EmailPasswordLogin } from './email-password';
 
-import { Wrapper } from '../../wrapper';
-import { useFetchConfig } from '../../../hooks';
 import { StatusProvider } from '../../../contexts/status.context';
+import { useFetchConfig } from '../../../hooks';
 import { LoginProps } from '../../../models';
+import { Wrapper } from '../../wrapper';
+import { OAuthButtons } from '../oauth/buttons';
 
 export const LoginForm: React.FC<LoginProps> = (props) => {
   const { config, isFetchingConfig } = useFetchConfig();
@@ -17,19 +15,10 @@ export const LoginForm: React.FC<LoginProps> = (props) => {
     return <p>Loading...</p>;
   }
 
-  const credentialButton: Record<OAuthProvider, React.FC<LoginProps>> = {
-    google: GoogleLogin,
-    facebook: FacebookLogin,
-  }
-
   return (
     <StatusProvider>
       <Wrapper>
-        {Object.keys(config.credentials).map((provider) => {
-          const Component = credentialButton[provider as OAuthProvider];
-
-          return <Component key={provider} {...props} />;
-        })}
+        <OAuthButtons {...props} config={config} />
 
         {!!config.emailPasswordConfig && (
           <EmailPasswordLogin

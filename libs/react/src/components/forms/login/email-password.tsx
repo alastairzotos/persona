@@ -2,15 +2,15 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import styled from 'styled-components'
-import { LoginEmailPasswordSchema, loginEmailPasswordSchema } from "../../../../schemas";
-import { useStatus } from "../../../../contexts/status.context";
-import { loginEmailPassword } from "../../../../requests/auth";
-import { useConfig } from "../../../../contexts/config.context";
-import { Button, Container } from "../../../primitives";
-import { useSession } from "../../../../contexts/session.context";
-import { useAttempt } from "../../../../hooks";
-import { FormErrorMessage, Input } from "../../../primitives/forms";
-import { LoginProps } from "../../../../models";
+import { LoginEmailPasswordSchema, loginEmailPasswordSchema } from "../../../schemas";
+import { useStatus } from "../../../contexts/status.context";
+import { loginEmailPassword } from "../../../requests/auth";
+import { useConfig } from "../../../contexts/config.context";
+import { Button, Container } from "../../primitives";
+import { useSession } from "../../../contexts/session.context";
+import { useAttempt } from "../../../hooks";
+import { FormErrorMessage, Input } from "../../primitives/forms";
+import { LoginProps } from "../../../models";
 
 const PromptContainer = styled('div')(({ theme }) => ({
   color: theme.textColor,

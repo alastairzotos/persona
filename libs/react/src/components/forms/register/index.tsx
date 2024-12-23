@@ -14,17 +14,26 @@ import { Wrapper } from "../../wrapper";
 import { useAttempt, useFetchConfig } from "../../../hooks";
 import { FormErrorMessage, Input } from "../../primitives/forms";
 import { LoginProps } from "../../../models";
+import { OAuthButtons } from "../oauth/buttons";
 
 const RegisterButton = styled(Button)({
   marginTop: 12,
 })
 
+const OAuthWrapper = styled.div({
+  textAlign: 'center',
+  marginBottom: 20,
+})
+
 interface Props extends LoginProps {
   email?: string;
   lockEmail?: boolean;
+  includeOAuth?: boolean;
 }
 
-const RegisterFormInner: React.FC<Props> = ({ fwdUrl, registerState, email, lockEmail }) => {
+const RegisterFormInner: React.FC<Props> = (props) => {
+  const { fwdUrl, registerState, email, lockEmail, includeOAuth } = props;
+
   const { apiUrl } = useConfig();
   const { login } = useSession();
   const { status } = useStatus();
@@ -63,6 +72,13 @@ const RegisterFormInner: React.FC<Props> = ({ fwdUrl, registerState, email, lock
 
   return (
     <Wrapper>
+      {includeOAuth && (
+        <OAuthWrapper>
+          <OAuthButtons {...props} config={config} />
+          <span>Or with email and password</span>
+        </OAuthWrapper>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <Container>
           <Controller
