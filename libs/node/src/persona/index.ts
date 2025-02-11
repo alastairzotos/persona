@@ -98,7 +98,7 @@ export class Persona<U extends BaseUserType = BaseUserType> {
     app.use(cors({
       credentials: true,
       origin: (origin, cb) => {
-        if (!origin || this.clientUrls?.includes(origin)) {
+        if (!origin || !this.clientUrls || this.clientUrls?.includes(origin) || this.clientUrls?.includes('*')) {
           cb(null, true);
         } else {
           cb(new Error('CORS error'));
