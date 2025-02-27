@@ -97,6 +97,8 @@ export class Persona<U extends BaseUserType = BaseUserType> {
     app.use(cookieParser());
     app.use(cors({
       credentials: true,
+      allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
+      exposedHeaders: ['Origin'],
       origin: (origin, cb) => {
         if (!origin || !this.clientUrls || this.clientUrls?.includes(origin) || this.clientUrls?.includes('*')) {
           cb(null, true);
